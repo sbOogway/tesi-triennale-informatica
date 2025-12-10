@@ -1,4 +1,4 @@
-#import "@local/tesi-uninsubria:0.1.0": sourcecode
+#import "@local/uninsubria-thesis:0.1.0": sourcecode
 = Control
 
 
