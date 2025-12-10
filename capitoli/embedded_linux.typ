@@ -1,4 +1,5 @@
-#import "@local/tesi-uninsubria:0.1.0": sourcecode
+#import "@local/uninsubria-thesis:0.1.0": sourcecode
+
 = Embedded Linux
 
 == Hardware
@@ -31,29 +32,29 @@ Questi due file contengono le istruzioni che consentono a Buildroot di risolvere
 #figure(
   caption: "amel-temp-control.mk",
   sourcecode()[```bash
-    AMEL_TEMP_CONTROL_VERSION = 44c17c6f2c492f1f3c7d8a6767df390c8d13eb9c
-    AMEL_TEMP_CONTROL_SITE = git@git.amelchem.com:mpapaccioli/temp-control.git
-    AMEL_TEMP_CONTROL_SITE_METHOD = git
+  AMEL_TEMP_CONTROL_VERSION = 44c17c6f2c492f1f3c7d8a6767df390c8d13eb9c
+  AMEL_TEMP_CONTROL_SITE = git@git.amelchem.com:mpapaccioli/temp-control.git
+  AMEL_TEMP_CONTROL_SITE_METHOD = git
 
-    AMEL_TEMP_CONTROL_DEPENDENCIES = libevdev
-    AMEL_TEMP_CONTROL_GIT_SUBMODULES = YES
+  AMEL_TEMP_CONTROL_DEPENDENCIES = libevdev
+  AMEL_TEMP_CONTROL_GIT_SUBMODULES = YES
 
-    define AMEL_TEMP_CONTROL_BUILD_CMDS
-    	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
-            -B $(@D)/build -S $(@D)
-    	make -C $(@D)/build -j
+  define AMEL_TEMP_CONTROL_BUILD_CMDS
+  	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
+          -B $(@D)/build -S $(@D)
+  	make -C $(@D)/build -j
 
-    endef
+  endef
 
-    define AMEL_TEMP_CONTROL_INSTALL_TARGET_CMDS
-     	$(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
-    	cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
-    	cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
+  define AMEL_TEMP_CONTROL_INSTALL_TARGET_CMDS
+   	$(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
+  	cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
+  	cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
 
-    endef
+  endef
 
-    $(eval $(generic-package))
-    ```],
+  $(eval $(generic-package))
+  ```],
 )
 
 Inizialmente, viene clonata la repository temp-control, contenente la GUI, al commit specificato, inizializzando i sottomoduli e verificando la presenza della dipendenza `libevdev`.
@@ -63,10 +64,32 @@ Successivamente, vengono cross-compilate la libreria LVGL e l'applicazione con i
 Infine, i binari della libreria e l'eseguibile dell'applicazione vengono installati sulla macchina target.
 
 === Il pacchetto amel-pid
+#figure(
+  caption: "amel-pid-control.mk",
+  sourcecode[```bash
+    AMEL_PID_VERSION = v0.0.3
+    AMEL_PID_SITE = git@git.amelchem.com:mpapaccioli/pid.git
+    AMEL_PID_SITE_METHOD = git
 
-```bash
+    AMEL_PID_DEPENDENCIES = libmodbus
 
-```
+    define AMEL_PID_BUILD_CMDS
+    	make -C $(@D) CC=$(TARGET_CC)
+    endef
+
+    define AMEL_PID_INSTALL_TARGET_CMDS
+    	$(INSTALL) -d $(TARGET_DIR)/opt/amel-pid/
+
+    	cp $(@D)/pid $(TARGET_DIR)/opt/amel-pid/pid
+
+    endef
+
+    $(eval $(generic-package))
+
+
+  ```],
+)
+
 
 Analogamente, è stato creato il pacchetto `amel-pid-control` per cross-compilare e installare la libreria PID sviluppata in C++.
 
@@ -77,5 +100,10 @@ Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il filesyst
 == File I/O
 
 == PID Control
+=== Sensore di temperatura
+I sensori di temperatura utilizzati sono due DS18B20 collegati in parallelo su un bus 1-Wire. 
+
+Il binario `pid` legge periodicamente la temperatura dai sensori e calcola il valore di output del controller PID in base alla temperatura misurata e al setpoint desiderato.
 
 == MODBUS RTU
+Per comunicare con l'inverter che controlla la ventola di raffreddamento, è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria `libmodbus`.
