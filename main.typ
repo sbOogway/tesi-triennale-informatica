@@ -23,4 +23,5 @@
 #include "capitoli/introduzione.typ"
 #include "capitoli/control.typ"
 #include "capitoli/embedded_linux.typ"
+#include "capitoli/front_e_back_end.typ"
 #include "capitoli/conclusione.typ"
