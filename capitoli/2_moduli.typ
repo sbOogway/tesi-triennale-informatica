@@ -1,8 +1,8 @@
 #import "@local/uninsubria-thesis:0.1.0": sourcecode
-= Control
+= Moduli
 
 
-== Graphical User Interface
+== `temp-control`
 
 Per controllare la temperatura della camera di collaudo, l'operatore imposta la temperatura target mediante un display touchscreen "NOME DISPLAY". L'interfaccia grafica è sviluppata utilizzando la libreria LVGL @LVGL e si è utilizzato un template @LVGL_LINUX contenente il porting su Linux fornito dagli sviluppatori della libreria.
 
@@ -106,11 +106,11 @@ Libevdev @libevdev è una libreria che gestisce gli eventi di input: riceve i to
 
 Il framebuffer device è semplicemente il file `/dev/fb0`, scritto dalla GUI, che contiene il colore di ciascun pixel dello schermo.
 
-== Compilazione della GUI
+=== Compilazione della GUI
 
 Per la compilazione dell'applicazione è necessaria una toolchain adatta all'architettura ARM. Nel nostro caso, ci affidiamo al compilatore e alle librerie fornite da Buildroot.
 
-=== `cross_compile_setup.cmake`
+==== `cross_compile_setup.cmake`
 #figure(
   caption: "cross_compile_setup.cmake",
   sourcecode(
@@ -139,6 +139,109 @@ LVGL viene compilata come libreria condivisa, mentre l'applicazione come eseguib
   caption: [Interfaccia grafica per il controllo della temperatura],
 ) <lvgl_gui>
 
-== Admin Control
+=== Branches
+Per organizzare efficientemente la repository sorgente, e stato realizzato un branching, creando una repository per lo sviluppo ed una per il dispositivo target.
+Esse sono uguali completamente tranne per il file `lv_conf.h`. 
 
-== Logging and Monitoring
+Per la branch di sviluppo, esso usa come backend `x11` e contiene dei sanity check, utili in sviluppo ma limitanti in termini di performance.
+
+Per la branch del dispositivo target sono stati disabilitati i sanity checks e utilizzata come backend il device `/dev/fb0`.
+
+Per proteggere il file `lv_conf.h` e stato aggiunto un file `.gitattributes` contenente `lv_conf.h merge=ours`.
+
+Questo speciale file di git, comunica al version control system che durante il merge delle branch di mantenere il file come si trova nella branch da cui si sta effettuando il merge, consentendo di mantenere separate le due configurazioni senza preoccuparsi di sovrascriverle accidentalmente.
+
+
+== `pid-control`
+=== Sensore di temperatura
+I sensori di temperatura utilizzati sono due DS18B20 collegati in parallelo su un bus 1-Wire.
+
+Il microcontrollore si comporta da master sul bus e richiede periodicamente la temperatura ai sensori.
+
+Il binario `pid` legge periodicamente e calcola il valore di output del controller PID in base alla temperatura misurata e al setpoint desiderato.
+
+Inizialmente esso conta il numero di sensori sul bus, alloca la memoria necessaria per immagazinare gli uuid dei sensori e poi legge effetivamente quest'ultimi in memoria.
+
+E stato preferito questo approccio per evitare complicazioni con `realloc` rispetto a leggere direttamente in un ciclo unico sia il numero di sensori che gli id. Questa procedura viene effettuate solamente una volta all'avvio e non ha un impatto significativo sulla performance dell'eseguibile.
+
+Un approccio senza salvare gli id dei sensori porterebbe una chiamata alla funzione `DS18X20_find_sensor` ripetutamente e sarebbe uno spreco di cicli di cpu quindi sacrifichiamo un po di memoria per questo.
+
+#figure(
+  caption: `pid-main`,
+  sourcecode[```c
+    typedef struct
+    {
+      char id[16];
+      int16_t temperature;
+      uint8_t uint_id[OW_ROMCODE_SIZE];
+    } sensor;
+
+    // first we count the number of devices on the bus
+    while (diff != OW_LAST_DEVICE)
+    {
+        sensors_count++;
+        DS18X20_find_sensor(&diff, id);
+    }
+
+    // we malloc based on the number of sensors
+    sensor *sensors = malloc(sizeof(sensor) * sensors_count);
+
+    diff = OW_SEARCH_FIRST;
+    int i = 0;
+    // we store the sensor ids
+    while (diff != OW_LAST_DEVICE)
+    {
+        DS18X20_find_sensor(&diff, id);
+        sensor s;
+        for (int i = 0; i < OW_ROMCODE_SIZE; i++)
+        {
+            s.uint_id[i] = id[i];
+        }
+        sensors[i] = s;
+        i++;
+    }
+
+    while (1)
+    {
+        // now we read the sensor temperatures every second
+        if (DS18X20_start_meas(DS18X20_POWER_EXTERN, NULL) != DS18X20_OK)
+        {
+            fprintf(stdout, "error in starting measurement\n");
+            fflush(stdout);
+            delay_ms(100);
+            break;
+        }
+        for (int i = 0; i < sensors_count; i++)
+        {
+            sensor s = sensors[i];
+            if (DS18X20_read_decicelsius(s.uint_id, &temp_dc) != DS18X20_OK)
+            {
+                fprintf(stdout, "error in reading sensor %s\n", s);
+                fflush(stdout);
+                delay_ms(100);
+                continue;
+            }
+            fprintf(stdout, "sensor %s TEMP %3d.%01d C\n", s.id, temp_dc / 10, temp_dc > 0 ? temp_dc % 10 : -temp_dc % 10);
+            fflush(stdout);
+        }
+        delay_ms(1000);
+    }
+  ```],
+)
+
+=== MODBUS RTU
+Per comunicare con l'inverter che controlla la ventola di raffreddamento, è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria `libmodbus`.
+
+=== Controllo pid
+
+== `common-control`
+=== Comunicazione tra GUI e PID
+Per fare in modo che l'interfaccia grafica e il processo di controllo pid comunichino e stato necessario comunicare attraverso dei file e utilizzando dei segnali.
+
+Quando un operatore cambia la temperatura target dall'interfaccia sul display LCD essa viene scritta sul file `/opt/amel/target-temperature`.
+
+Analogamente, il processo pid quando rileva una temperatura tramite i sensori DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`, con x che rappresenta il numero del sensore sul bus. 
+
+=== Admin Control
+
+=== Logging and Monitoring

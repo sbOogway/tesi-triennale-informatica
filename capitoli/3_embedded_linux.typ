@@ -114,84 +114,12 @@ Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il filesyst
 === Installazione del modulo c210x per la porta seriale
 Per consentire la comunicazione seriale tramite la porta RS-232 della host-board Ganador, è stato necessario includere il modulo kernel `c210x` per il controller USB-seriale.
 Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot, selezionandolo in `Kernel modules -> USB Serial Converter support -> USB CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
-== File I/O
 
-== PID Control
-=== Sensore di temperatura
-I sensori di temperatura utilizzati sono due DS18B20 collegati in parallelo su un bus 1-Wire.
+== Custom patches a barebox e linux
+A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i codici sorgenti di barebox e linux.
 
-Il microcontrollore si comporta da master sul bus e richiede periodicamente la temperatura ai sensori.
+E stata effettuata una clonazione della repository del kernel linux di amel ed e stato abilitato di default il modulo cp210x, modificando il file `/drivers/usb/serial/Kconfig`.
 
-Il binario `pid` legge periodicamente e calcola il valore di output del controller PID in base alla temperatura misurata e al setpoint desiderato.
+Analogamente, e stato cambiato l ordine nel bootloader barebox, prioritarizzando il device `mmc2` invece che nand.
 
-Inizialmente esso conta il numero di sensori sul bus, alloca la memoria necessaria per immagazinare gli uuid dei sensori e poi legge effetivamente quest'ultimi in memoria.
 
-E stato preferito questo approccio per evitare complicazioni con `realloc` rispetto a leggere direttamente in un ciclo unico sia il numero di sensori che gli id. Questa procedura viene effettuate solamente una volta all'avvio e non ha un impatto significativo sulla performance dell'eseguibile.
-
-Un approccio senza salvare gli id dei sensori porterebbe una chiamata alla funzione `DS18X20_find_sensor` ripetutamente e sarebbe uno spreco di cicli di cpu quindi sacrifichiamo un po di memoria per questo.
-
-#figure(
-  caption: `pid-main`,
-  sourcecode[```c
-    typedef struct
-    {
-      char id[16];
-      int16_t temperature;
-      uint8_t uint_id[OW_ROMCODE_SIZE];
-    } sensor;
-
-    // first we count the number of devices on the bus
-    while (diff != OW_LAST_DEVICE)
-    {
-        sensors_count++;
-        DS18X20_find_sensor(&diff, id);
-    }
-
-    // we malloc based on the number of sensors
-    sensor *sensors = malloc(sizeof(sensor) * sensors_count);
-
-    diff = OW_SEARCH_FIRST;
-    int i = 0;
-    // we store the sensor ids
-    while (diff != OW_LAST_DEVICE)
-    {
-        DS18X20_find_sensor(&diff, id);
-        sensor s;
-        for (int i = 0; i < OW_ROMCODE_SIZE; i++)
-        {
-            s.uint_id[i] = id[i];
-        }
-        sensors[i] = s;
-        i++;
-    }
-
-    while (1)
-    {
-        // now we read the sensor temperatures every second
-        if (DS18X20_start_meas(DS18X20_POWER_EXTERN, NULL) != DS18X20_OK)
-        {
-            fprintf(stdout, "error in starting measurement\n");
-            fflush(stdout);
-            delay_ms(100);
-            break;
-        }
-        for (int i = 0; i < sensors_count; i++)
-        {
-            sensor s = sensors[i];
-            if (DS18X20_read_decicelsius(s.uint_id, &temp_dc) != DS18X20_OK)
-            {
-                fprintf(stdout, "error in reading sensor %s\n", s);
-                fflush(stdout);
-                delay_ms(100);
-                continue;
-            }
-            fprintf(stdout, "sensor %s TEMP %3d.%01d C\n", s.id, temp_dc / 10, temp_dc > 0 ? temp_dc % 10 : -temp_dc % 10);
-            fflush(stdout);
-        }
-        delay_ms(1000);
-    }
-  ```],
-)
-
-== MODBUS RTU
-Per comunicare con l'inverter che controlla la ventola di raffreddamento, è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria `libmodbus`.

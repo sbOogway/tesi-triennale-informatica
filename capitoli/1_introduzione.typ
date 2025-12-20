@@ -30,10 +30,10 @@ La comunicazione tra il sistema embedded e il web server avviene mediante scritt
 
 == Struttura del codice sorgente
 
-Il codice sorgente del progetto è pubblicato su GitHub @root. Questa repository è composta da più sottomoduli:
+Il codice sorgente del progetto è pubblicato su GitHub @root. Il codice sorgente è composta da più moduli:
 
-- tesi-gui @GUI
-- tesi-overleaf @LaTeX_Source
-- tesi-modbus
+- `temp-control`: responsabile per la gui scritta in LVGL.
+- `pid-control`: responsabile per il controllo pid, la rilevazione della temperatura e la comunicazione MODBUS rtu.
+- `common-control`: contente funzioni helper comuni di aiuto e definizioni per la comunicazione tra interfaccia grafica e backend.
 
-Questo approccio è stato adottato per garantire modularità e organizzazione del software @git_submodules.
+E stato intrapreso questo approccio per garantire modularita del codice, consentendo in futuro di poter rimpiazzare ciascun modulo con relativa facilita, rispetto ad un approccio monolitico.
