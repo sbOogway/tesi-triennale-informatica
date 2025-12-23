@@ -233,14 +233,26 @@ Un approccio senza salvare gli id dei sensori porterebbe una chiamata alla funzi
 Per comunicare con l'inverter che controlla la ventola di raffreddamento, è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria `libmodbus`.
 
 === Controllo pid
+==== Monotonic clock
+`timer_fd`
+==== Scheduler priority
+
 
 == `common-control`
+
 === Comunicazione tra GUI e PID
 Per fare in modo che l'interfaccia grafica e il processo di controllo pid comunichino e stato necessario comunicare attraverso dei file e utilizzando dei segnali.
 
 Quando un operatore cambia la temperatura target dall'interfaccia sul display LCD essa viene scritta sul file `/opt/amel/target-temperature`.
 
 Analogamente, il processo pid quando rileva una temperatura tramite i sensori DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`, con x che rappresenta il numero del sensore sul bus. 
+
+=== `logging.h`
+Per stampare a schermo in modo ordinato i messaggi dell'applicazione e stato implementata una semplice libreria in c che consente di loggare, anche con strighe formattate, ai livelli `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR` e `FATAL`. 
+Si puo decidere a che livello filtrare i messaggi e anche se scrivere su file nel syslog o sulla console. 
+Per evitare che piu log si sovrascrivino a vicenda viene utilizzato un meccanismo di mutex.
+E stata aggiunta un opzione per decidere la precisione del timer per intervalli di tempo sotto al secondo, utile per debuggare la regolarita del controllo pid.
+
 
 === Admin Control
 

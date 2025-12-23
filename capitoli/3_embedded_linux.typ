@@ -110,10 +110,17 @@ E stata creata una rete virtuale ed e stato aggiunto un ssh server per consentir
 E stato necessario modificare lo script in `/etc/init.d/S50network` per configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico all'avvio del sistema e
 permettere il login all'utente `root` tramite password modificando il file `/etc/ssh/sshd_config`.
 Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il filesystem e l'immagine del kernel vengono assemblati in un file `sdcard.img` pronto per essere scritto su una scheda SD e avviato sul dispositivo embedded.
+Inoltre, la rete virtuale e stata create in modo da condividere l accesso ad internet e dopo aver impostato come default gateway il pc creatore della rete bridge e possibile accedere alla rete globale dal sistema embedded.
+E stato utilizzato il dns server di google `8.8.8.8`.
+L'accesso ad internet e necessario per la configurazione di NTP, come descritto in seguito.
 
 === Installazione del modulo c210x per la porta seriale
 Per consentire la comunicazione seriale tramite la porta RS-232 della host-board Ganador, è stato necessario includere il modulo kernel `c210x` per il controller USB-seriale.
 Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot, selezionandolo in `Kernel modules -> USB Serial Converter support -> USB CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
+
+=== Il pacchetto NTP
+Per garantire la corretta sincronizzazione dell-orologio di sistema e stato necessario installare un client per il Network Time Protocol tramite buildroot.
+
 
 == Custom patches a barebox e linux
 A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i codici sorgenti di barebox e linux.
