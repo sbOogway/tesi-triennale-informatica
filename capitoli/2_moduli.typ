@@ -5,6 +5,9 @@
 Il modulo `common-control` contiene funzioni helper comuni, header di
 configurazione globale e script per inizializzare e avviare l'intero sistema.
 
+Viene utilizzata la cartella di sistema `/opt/amel/` per contenere gli
+script e i file di tutti i moduli.
+
 === Comunicazione tra GUI e PID
 Per fare in modo che i moduli `temp-control` e `pid-control` comunichino
 tra di loro è stato necessario sviluppare un sistema di segnali e scrittura
@@ -15,11 +18,10 @@ LCD essa viene scritta sul file `/opt/amel/target-temperature`.
 
 Analogamente, il processo PID quando rileva una temperatura tramite i sensori
 DS18B20 @DS18B20, scrive quest'ultima sul file
-`/opt/amel/current-temperature/sX`,
-con x che rappresenta il numero del sensore sul bus. Subito dopo aver scritto,
-viene mandato un segnale a `temp-control`, che a sua volta legge il file
-e aggiorna
-la temperatura del sensore spiegata successivamente.
+`/opt/amel/current-temperature/sX`, con x che rappresenta il numero del
+sensore sul bus. Subito dopo aver scritto, viene mandato un segnale a
+`temp-control`, che a sua volta legge il file e aggiorna la temperatura del
+sensore spiegata successivamente.
 
 === `logging.h`
 Per stampare a schermo in modo ordinato i messaggi dell'applicazione è stato
@@ -32,9 +34,8 @@ file nel syslog o sulla console.
 Per evitare che più log si sovrascrivino a vicenda viene utilizzato un
 meccanismo di mutex.
 È stata aggiunta un'opzione per decidere la precisione del timer per
-intervalli
-di tempo sotto al secondo, utile per debuggare la regolarità del controllo
-PID.
+intervalli di tempo sotto al secondo, utile per debuggare la regolarità
+del controllo PID.
 
 === `bash` templating with c preprocessor
 Per evitare duplicazioni di costanti all'interno del modulo, è stato
@@ -51,7 +52,17 @@ In questo modo e necessario cambiare le variabili solamente nell'header di
 configurazione per averle aggiornate anche negli script.
 
 === Esecuzione del modulo
-La prima volta che si avvia il dispositivo embedded e necessario
+La prima volta che si avvia il dispositivo embedded e necessario eseguire lo
+script `/opt/amel/init.sh`, che si occupa di inizializzare le directory per
+i sensori di temperatura e setuppare l access control. Per avviare front e
+back end in un unico comando si utilizza lo script `/opt/amel/run.sh`.
+Esso avvia per primo il main di `temp-control`, che si mette in ascolto
+del segnale dal `pid-control`.
+Successivamente parte `pid-control` che inizializza il bus one-wire e scrive
+il numero di sensori nel file `/opt/amel/number-sensors`. Una volta fatto cio,
+manda il segnale a `temp-control` e i due main iniziano l'esecuzione,
+comunicando update in temperatura target e temperatura attuale tramite
+segnali con il comando `kill`.
 
 == `temp-control`
 
@@ -61,6 +72,12 @@ L'interfaccia grafica è sviluppata utilizzando la libreria LVGL @LVGL e si
 è utilizzato un template @LVGL_LINUX contenente il porting su Linux fornito
 dagli sviluppatori della libreria.
 
+
+=== Schermata principale
+#figure(
+  image("/images/lvgl-gui.png", width: 10cm),
+  caption: [Interfaccia grafica per il controllo della temperatura],
+) <lvgl_gui>
 Nell'interfaccia vengono mostrate temperatura target, temperatura attuale dei
 sensori collegati sul bus one-wire e due bottoni per aumentare e diminuire
 la temperatura target.
@@ -103,6 +120,7 @@ target, viene invocata una funzione di callback che si occupa di aggiornare la
 `label` con
 la temperatura target sullo schermo e di scriverla nell'apposito file.
 
+=== Backend I/O
 I backend utilizzati da LVGL per l'I/O sono libevdev e il framebuffer
 device. Sono stati scelti per la loro semplicità e il ridotto utilizzo
 di risorse.
@@ -146,10 +164,7 @@ poi eseguiti con `make -C build -j` @cmake.
 LVGL viene compilata come libreria condivisa, mentre l'applicazione come
 eseguibile.
 
-#figure(
-  image("/images/lvgl-gui.png", width: 10cm),
-  caption: [Interfaccia grafica per il controllo della temperatura],
-) <lvgl_gui>
+
 
 === Branches
 Per organizzare efficientemente la repository sorgente, è stato realizzato un
@@ -172,11 +187,10 @@ cui si sta effettuando il merge, consentendo di mantenere separate le due
 configurazioni senza preoccuparsi di sovrascriverle accidentalmente.
 
 
-== `PID-control`
+== `pid-control`
 === Sensore di temperatura
 I sensori di temperatura utilizzati sono due DS18B20 @DS18B20 collegati
-in parallelo
-su un bus 1-Wire.
+in parallelo su un bus 1-Wire.
 
 Il microcontrollore si comporta da master sul bus e richiede periodicamente
 la temperatura ai sensori.
@@ -198,7 +212,7 @@ funzione `DS18X20_find_sensor` ripetutamente e sarebbe uno spreco di cicli
 di CPU quindi sacrifichiamo un po' di memoria per questo.
 
 #figure(
-  caption: `PID-main`,
+  caption: `pid/src/main.c`,
   sourcecode[```c
     typedef struct
     {
@@ -269,8 +283,7 @@ Non è stato utilizzato il coefficiente derivativo perché
 
 Per campionare la temperatura nella stanza ad una frequenza costante,
 fondamentale per un corretto calcolo PID, è stato utilizzato l'header
-`<sys/timerfd.h>`
-della `Standard C library`.
+`<sys/timerfd.h>` della `Standard C library`.
 Queste chiamate di sistema creano e operano su un timer che consegna segnali
 di scadenza del timer ad intervalli regolari tramite un file descriptor.
 
@@ -278,10 +291,8 @@ di scadenza del timer ad intervalli regolari tramite un file descriptor.
 
 È stata assegnata la massima priorità di scheduler al programma tramite
 l'header `<sched.h>` per evitare interrupt durante la misurazione e per
-cercare di
-mantenere più costante possibile la periodicità del campionamento.
-
-
+cercare di mantenere più costante possibile la periodicità del
+campionamento.
 
 
 === Admin Control

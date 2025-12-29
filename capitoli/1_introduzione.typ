@@ -21,7 +21,7 @@ protocollo MODBUS RTU @libmodbus.
 
 Il sistema embedded fornisce inoltre un'interfaccia per regolare la temperatura
 target dell'ambiente mediante un display touchscreen. La GUI è sviluppata
-utilizzando la libreria LVGL.
+utilizzando la libreria LVGL @LVGL.
 
 Il sistema embedded è collegato alla rete aziendale tramite Ethernet;
 attraverso un web server sarà possibile regolare la temperatura target
@@ -44,11 +44,11 @@ nel tempo. In tal caso, il web server gestirà l'interazione con esso.
 Il codice sorgente del progetto è pubblicato su GitHub @root. Il codice
 sorgente è composto da più moduli:
 
+- `common-control`: contiene funzioni helper comuni di aiuto e definizioni
+ per la comunicazione tra interfaccia grafica e backend.
 - `temp-control`: responsabile per la GUI scritta in LVGL.
 - `pid-control`: responsabile per il controllo PID, la rilevazione della
  temperatura e la comunicazione MODBUS RTU @libmodbus.
-- `common-control`: contiene funzioni helper comuni di aiuto e definizioni
- per la comunicazione tra interfaccia grafica e backend.
 
 È stato intrapreso questo approccio per garantire modularità del codice,
 consentendo in futuro di poter rimpiazzare ciascun modulo con relativa

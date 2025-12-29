@@ -25,7 +25,7 @@ La scheda utilizzata per il sistema embedded è sviluppata da AMEL e comprende:
 
 == Costruzione del sistema
 
-Per orchestrare il sistema è stato utilizzato Linux. È stato creato un
+Per orchestrare il sistema è stato utilizzato Linux @linux. È stato creato un
 kernel personalizzato con soli i moduli essenziali per il funzionamento,
 data la limitatezza delle risorse hardware. Lo strumento utilizzato per
 completare l'opera è Buildroot @buildroot, che consiste essenzialmente in
@@ -51,33 +51,69 @@ risolvere le dipendenze, scaricare e installare il pacchetto nel filesystem
 del dispositivo target.
 
 === Il pacchetto `amel-common-control`
+#figure(
+  caption: `amel-common-control.mk`,
+  sourcecode()[```sh
+  AMEL_COMMON_CONTROL_VERSION = v0.9
+  AMEL_COMMON_CONTROL_SITE =
+  git@git.amelchem.com:mpapaccioli/common-control.git
+  AMEL_COMMON_CONTROL_SITE_METHOD = git
+
+  define AMEL_COMMON_CONTROL_BUILD_CMDS
+	$(TARGET_MAKE_ENV) TOOLS=$(TARGET_CROSS) STAGE=$(STAGING_DIR) \
+	cmake -S $(@D) -B $(@D)/build -D CMAKE_BUILD_TYPE=Release -D  \
+	CMAKE_INSTALL_PREFIX=/usr				      \
+	-DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake   \
+	-DBUILD_SHARED_LIBS=ON
+	$(TARGET_MAKE_ENV) cmake --build $(@D)/build
+	make -C $(@D) source/init.sh source/run.sh
+  endef
+
+  define AMEL_COMMON_CONTROL_INSTALL_TARGET_CMDS
+	$(TARGET_MAKE_ENV) DESTDIR=$(TARGET_DIR) cmake --install $(@D)/build
+	mkdir -p $(STAGING_DIR)/usr/include/common-control
+	mkdir -p $(STAGING_DIR)/usr/lib
+
+	cp -r $(@D)/build/libcommon-control.so* $(STAGING_DIR)/usr/lib/
+	cp -r $(@D)/include/common-control.h
+	$(STAGING_DIR)/usr/include/common-control
+	cp -r $(@D)/include/logging.h $(STAGING_DIR)/usr/include/common-control
+
+	$(INSTALL) -d $(TARGET_DIR)/opt/amel
+	$(INSTALL) -m 0755 $(@D)/source/init.sh $(TARGET_DIR)/opt/amel/init.sh
+	$(INSTALL) -m 0755 $(@D)/source/run.sh $(TARGET_DIR)/opt/amel/run.sh
+  endef
+
+  $(eval $(generic-package))
+  ```],
+)
 
 === Il pacchetto `amel-temp-control`
 #figure(
   caption: "amel-temp-control.mk",
   sourcecode()[```bash
-  AMEL_TEMP_CONTROL_VERSION = 44c17c6f2c492f1f3c7d8a6767df390c8d13eb9c
-  AMEL_TEMP_CONTROL_SITE = git@git.amelchem.com:mpapaccioli/temp-control.git
-  AMEL_TEMP_CONTROL_SITE_METHOD = git
+   AMEL_TEMP_CONTROL_VERSION = 44c17c6f2c492f1f3c7d8a6767df390c8d13eb9c
+   AMEL_TEMP_CONTROL_SITE = git@git.amelchem.com:mpapaccioli/temp-control.git
+   AMEL_TEMP_CONTROL_SITE_METHOD = git
 
-  AMEL_TEMP_CONTROL_DEPENDENCIES = libevdev
-  AMEL_TEMP_CONTROL_GIT_SUBMODULES = YES
+   AMEL_TEMP_CONTROL_DEPENDENCIES = libevdev
+   AMEL_TEMP_CONTROL_GIT_SUBMODULES = YES
 
-  define AMEL_TEMP_CONTROL_BUILD_CMDS
-	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
-	  -B $(@D)/build -S $(@D)
-	make -C $(@D)/build -j @cmake
+   define AMEL_TEMP_CONTROL_BUILD_CMDS
+  cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
+    -B $(@D)/build -S $(@D)
+  make -C $(@D)/build -j @cmake
 
-  endef
+   endef
 
-  define AMEL_TEMP_CONTROL_INSTALL_TARGET_CMDS
-	$(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
-	cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
-	cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
+   define AMEL_TEMP_CONTROL_INSTALL_TARGET_CMDS
+  $(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
+  cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
+  cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
 
-  endef
+   endef
 
-  $(eval $(generic-package))
+   $(eval $(generic-package))
   ```],
 )
 
@@ -95,24 +131,24 @@ installati sulla macchina target.
 #figure(
   caption: "amel-pid-control.mk",
   sourcecode[```bash
-    AMEL_PID_VERSION = v0.0.3
-    AMEL_PID_SITE = git@git.amelchem.com:mpapaccioli/pid.git
-    AMEL_PID_SITE_METHOD = git
+     AMEL_PID_VERSION = v0.0.3
+     AMEL_PID_SITE = git@git.amelchem.com:mpapaccioli/pid.git
+     AMEL_PID_SITE_METHOD = git
 
-    AMEL_PID_DEPENDENCIES = libmodbus
+     AMEL_PID_DEPENDENCIES = libmodbus
 
-    define AMEL_PID_BUILD_CMDS
-	make -C $(@D) CC=$(TARGET_CC)
-    endef
+     define AMEL_PID_BUILD_CMDS
+  make -C $(@D) CC=$(TARGET_CC)
+     endef
 
-    define AMEL_PID_INSTALL_TARGET_CMDS
-	$(INSTALL) -d $(TARGET_DIR)/opt/amel-pid/
+     define AMEL_PID_INSTALL_TARGET_CMDS
+  $(INSTALL) -d $(TARGET_DIR)/opt/amel-pid/
 
-	cp $(@D)/pid $(TARGET_DIR)/opt/amel-pid/pid
+  cp $(@D)/pid $(TARGET_DIR)/opt/amel-pid/pid
 
-    endef
+     endef
 
-    $(eval $(generic-package))
+     $(eval $(generic-package))
 
 
   ```],
