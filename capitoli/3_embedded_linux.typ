@@ -26,17 +26,29 @@ La scheda utilizzata per il sistema embedded è sviluppata da AMEL e comprende:
 
 == Costruzione del sistema
 
-Per orchestrare il sistema è stato utilizzato Linux. È stato creato un kernel personalizzato con soli i moduli essenziali per il funzionamento, data la limitatezza delle risorse hardware. Lo strumento utilizzato per completare l'opera è Buildroot @buildroot, che consiste essenzialmente in una serie di Makefile per installare e cross-compilare tutte le librerie e i pacchetti necessari alla costruzione e all'esecuzione del sistema. Inoltre, si occupa di creare il filesystem e di prepararlo in un'immagine pronta per essere scritta sulla scheda SD del sistema embedded.
+Per orchestrare il sistema è stato utilizzato Linux. È stato creato un
+kernel personalizzato con soli i moduli essenziali per il funzionamento,
+data la limitatezza delle risorse hardware. Lo strumento utilizzato per
+completare l'opera è Buildroot @buildroot, che consiste essenzialmente in
+una serie di Makefile per installare e cross-compilare tutte le librerie e i
+pacchetti necessari alla costruzione e all'esecuzione del sistema. Inoltre,
+si occupa di creare il filesystem e di prepararlo in un'immagine pronta per
+essere scritta sulla scheda SD del sistema embedded.
 
-Per aggiungere l'interfaccia grafica sviluppata con LVGL è stato necessario creare un nuovo pacchetto in Buildroot.
+Per aggiungere l'interfaccia grafica sviluppata con LVGL è stato necessario
+creare un nuovo pacchetto in Buildroot.
 
-All'avvio del sistema, il bootloader del chip attiva AT91bootstrap, che a sua volta avvia Barebox, il quale carica il kernel in memoria.
+All'avvio del sistema, il bootloader del chip attiva AT91bootstrap, che a
+sua volta avvia Barebox, il quale carica il kernel in memoria.
 
 == Personalizzazione di buildroot
 
-Per aggiungere un pacchetto a Buildroot è necessario inserire una nuova voce nella cartella `package`, comprendente un file `Config.in` e un file `.mk`.
+Per aggiungere un pacchetto a Buildroot è necessario inserire una nuova voce
+nella cartella `package`, comprendente un file `Config.in` e un file `.mk`.
 
-Questi due file contengono le istruzioni che consentono a Buildroot di risolvere le dipendenze, scaricare e installare il pacchetto nel filesystem del dispositivo target.
+Questi due file contengono le istruzioni che consentono a Buildroot di
+risolvere le dipendenze, scaricare e installare il pacchetto nel filesystem
+del dispositivo target.
 
 === Il pacchetto `amel-common-control`
 
@@ -52,16 +64,16 @@ Questi due file contengono le istruzioni che consentono a Buildroot di risolvere
   AMEL_TEMP_CONTROL_GIT_SUBMODULES = YES
 
   define AMEL_TEMP_CONTROL_BUILD_CMDS
-  	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
-          -B $(@D)/build -S $(@D)
-  	make -C $(@D)/build -j
+	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
+	  -B $(@D)/build -S $(@D)
+	make -C $(@D)/build -j
 
   endef
 
   define AMEL_TEMP_CONTROL_INSTALL_TARGET_CMDS
-   	$(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
-  	cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
-  	cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
+	$(INSTALL) -d $(TARGET_DIR)/opt/amel-temp-control/
+	cp $(@D)/build/bin/lvglsim $(TARGET_DIR)/opt/amel-temp-control/main
+	cp -r $(@D)/build/lvgl/lib/* $(TARGET_DIR)/usr/lib
 
   endef
 
@@ -69,11 +81,15 @@ Questi due file contengono le istruzioni che consentono a Buildroot di risolvere
   ```],
 )
 
-Inizialmente, viene clonata la repository temp-control, contenente la GUI, al commit specificato, inizializzando i sottomoduli e verificando la presenza della dipendenza `libevdev`.
+Inizialmente, viene clonata la repository temp-control, contenente la GUI,
+al commit specificato, inizializzando i sottomoduli e verificando la presenza
+della dipendenza `libevdev`.
 
-Successivamente, vengono cross-compilate la libreria LVGL e l'applicazione con interfaccia grafica utilizzando il compilatore ARM fornito da Buildroot.
+Successivamente, vengono cross-compilate la libreria LVGL e l'applicazione
+con interfaccia grafica utilizzando il compilatore ARM fornito da Buildroot.
 
-Infine, i binari della libreria e l'eseguibile dell'applicazione vengono installati sulla macchina target.
+Infine, i binari della libreria e l'eseguibile dell'applicazione vengono
+installati sulla macchina target.
 
 === Il pacchetto `amel-pid`
 #figure(
@@ -86,13 +102,13 @@ Infine, i binari della libreria e l'eseguibile dell'applicazione vengono install
     AMEL_PID_DEPENDENCIES = libmodbus
 
     define AMEL_PID_BUILD_CMDS
-    	make -C $(@D) CC=$(TARGET_CC)
+	make -C $(@D) CC=$(TARGET_CC)
     endef
 
     define AMEL_PID_INSTALL_TARGET_CMDS
-    	$(INSTALL) -d $(TARGET_DIR)/opt/amel-pid/
+	$(INSTALL) -d $(TARGET_DIR)/opt/amel-pid/
 
-    	cp $(@D)/pid $(TARGET_DIR)/opt/amel-pid/pid
+	cp $(@D)/pid $(TARGET_DIR)/opt/amel-pid/pid
 
     endef
 
@@ -103,30 +119,50 @@ Infine, i binari della libreria e l'eseguibile dell'applicazione vengono install
 )
 
 
-Analogamente, è stato creato il pacchetto `amel-pid-control` per cross-compilare e installare la libreria PID sviluppata in C++.
+Analogamente, è stato creato il pacchetto `amel-pid-control` per
+cross-compilare e installare la libreria PID sviluppata in C++.
 
 === Modifica pacchetti networking
-E stata creata una rete virtuale ed e stato aggiunto un ssh server per consentire il collegamento remoto al dispositivo embedded.
-E stato necessario modificare lo script in `/etc/init.d/S50network` per configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico all'avvio del sistema e
-permettere il login all'utente `root` tramite password modificando il file `/etc/ssh/sshd_config`.
-Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il filesystem e l'immagine del kernel vengono assemblati in un file `sdcard.img` pronto per essere scritto su una scheda SD e avviato sul dispositivo embedded.
-Inoltre, la rete virtuale e stata create in modo da condividere l accesso ad internet e dopo aver impostato come default gateway il pc creatore della rete bridge e possibile accedere alla rete globale dal sistema embedded.
+E stata creata una rete virtuale ed e stato aggiunto un ssh server per
+consentire il collegamento remoto al dispositivo embedded.
+E stato necessario modificare lo script in `/etc/init.d/S50network` per
+configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico
+all'avvio del sistema e
+permettere il login all'utente `root` tramite password modificando il file
+`/etc/ssh/sshd_config`.
+Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il
+filesystem e l'immagine del kernel vengono assemblati in un file `sdcard.img`
+pronto per essere scritto su una scheda SD e avviato sul dispositivo embedded.
+Inoltre, la rete virtuale e stata create in modo da condividere l accesso
+ad internet e dopo aver impostato come default gateway il pc creatore della
+rete bridge e possibile accedere alla rete globale dal sistema embedded.
 E stato utilizzato il dns server di google `8.8.8.8`.
-L'accesso ad internet e necessario per la configurazione di NTP, come descritto in seguito.
+L'accesso ad internet e necessario per la configurazione di NTP, come
+descritto in seguito.
 
 === Installazione del modulo c210x per la porta seriale
-Per consentire la comunicazione seriale tramite la porta RS-232 della host-board Ganador, è stato necessario includere il modulo kernel `c210x` per il controller USB-seriale.
-Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot, selezionandolo in `Kernel modules -> USB Serial Converter support -> USB CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
+Per consentire la comunicazione seriale tramite la porta RS-232 della
+host-board Ganador, è stato necessario includere il modulo kernel `c210x`
+per il controller USB-seriale.
+Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot,
+selezionandolo in `Kernel modules -> USB Serial Converter support -> USB
+CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
 
 === Il pacchetto NTP
-Per garantire la corretta sincronizzazione dell-orologio di sistema e stato necessario installare il client `ntpd` per il Network Time Protocol tramite buildroot.
+Per garantire la corretta sincronizzazione dell-orologio di sistema e stato
+necessario installare il client `ntpd` per il Network Time Protocol tramite
+buildroot.
 
 
 == Custom patches a barebox e linux
-A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i codici sorgenti di barebox e linux.
+A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i
+codici sorgenti di barebox e linux.
 
-E stata effettuata una clonazione della repository del kernel linux di amel ed e stato abilitato di default il modulo cp210x, modificando il file `/drivers/usb/serial/Kconfig`.
+E stata effettuata una clonazione della repository del kernel linux di
+amel ed e stato abilitato di default il modulo cp210x, modificando il file
+`/drivers/usb/serial/Kconfig`.
 
-Analogamente, e stato cambiato l ordine nel bootloader barebox, prioritarizzando il device `mmc2` invece che `nand`.
+Analogamente, e stato cambiato l ordine nel bootloader barebox,
+prioritarizzando il device `mmc2` invece che `nand`.
 
 
