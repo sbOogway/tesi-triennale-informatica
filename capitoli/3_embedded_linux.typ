@@ -8,19 +8,19 @@ La scheda utilizzata per il sistema embedded è sviluppata da AMEL e comprende:
 
 - una host-board Ganador (rev. 4) che integra:
   - una memoria SD utilizzata come disco fisso;
-  - un'interfaccia Ethernet
-  - un'interfaccia seriale
-  - un display touchscreen
+  - un'interfaccia Ethernet;
+  - un'interfaccia seriale;
+  - un display touchscreen.
 
 - un system-on-module Vulcano-A5 che integra:
-  - una cpu Atmel ARM9 AT91SAM9X35 @ 400MHz
-  - 128 MB DDR2 SDRAM
-  - 256 MB NAND Flash
-  - SODIMM200 interface
-  - 10/100 Mbps Ethernet MAC Controller
-  - 2x USB 2.0 Host, 1x USB 2.0 Host/Device
-  - 3x USARTs
-  - TFT LCD Controller with TTL / LVDS support
+  - una CPU Atmel ARM9 AT91SAM9X35 @ 400MHz;
+  - 128 MB DDR2 SDRAM;
+  - 256 MB NAND Flash;
+  - SODIMM200 interface;
+  - 10/100 Mbps Ethernet MAC Controller;
+  - 2x USB 2.0 Host, 1x USB 2.0 Host/Device;
+  - 3x USARTs;
+  - TFT LCD Controller with TTL / LVDS support.
 
 
 == Costruzione del sistema
@@ -122,9 +122,9 @@ Analogamente, è stato creato il pacchetto `amel-pid-control` per
 cross-compilare e installare la libreria PID sviluppata in C++.
 
 === Modifica pacchetti networking
-E stata creata una rete virtuale ed e stato aggiunto un ssh server @openssh per
+È stata creata una rete virtuale ed è stato aggiunto un SSH server @openssh per
 consentire il collegamento remoto al dispositivo embedded.
-E stato necessario modificare lo script in `/etc/init.d/S50network` per
+È stato necessario modificare lo script in `/etc/init.d/S50network` per
 configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico
 all'avvio del sistema e
 permettere il login all'utente `root` tramite password modificando il file
@@ -132,36 +132,36 @@ permettere il login all'utente `root` tramite password modificando il file
 Dopo aver ripetuto questo processo per tutti i pacchetti desiderati, il
 filesystem e l'immagine del kernel vengono assemblati in un file `sdcard.img`
 pronto per essere scritto su una scheda SD e avviato sul dispositivo embedded.
-Inoltre, la rete virtuale e stata create in modo da condividere l accesso
-ad internet e dopo aver impostato come default gateway il pc creatore della
-rete bridge e possibile accedere alla rete globale dal sistema embedded.
-E stato utilizzato il dns server di google `8.8.8.8`.
-L'accesso ad internet e necessario per la configurazione di NTP @ntp, come
+Inoltre, la rete virtuale è stata creata in modo da condividere l'accesso
+a Internet e dopo aver impostato come default gateway il PC creatore della
+rete bridge è possibile accedere alla rete globale dal sistema embedded.
+È stato utilizzato il DNS server di Google `8.8.8.8`.
+L'accesso a Internet è necessario per la configurazione di NTP @ntp, come
 descritto in seguito.
 
 === Installazione del modulo c210x per la porta seriale
 Per consentire la comunicazione seriale tramite la porta RS-232 della
 host-board Ganador, è stato necessario includere il modulo kernel `c210x`
 per il controller USB-seriale.
-Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot,
+Il modulo è stato aggiunto tramite il menu di configurazione di Buildroot,
 selezionandolo in `Kernel modules -> USB Serial Converter support -> USB
 CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
 
 === Il pacchetto NTP
-Per garantire la corretta sincronizzazione dell-orologio di sistema e stato
+Per garantire la corretta sincronizzazione dell'orologio di sistema è stato
 necessario installare il client `ntpd` per il Network Time Protocol tramite
-buildroot.
+Buildroot.
 
 
 == Custom patches a barebox e linux
 A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i
 codici sorgenti di barebox e linux.
 
-E stata effettuata una clonazione della repository del kernel linux di
-amel ed e stato abilitato di default il modulo cp210x, modificando il file
+È stata effettuata una clonazione della repository del kernel Linux di
+Amel ed è stato abilitato di default il modulo cp210x, modificando il file
 `/drivers/usb/serial/Kconfig`.
 
-Analogamente, e stato cambiato l ordine nel bootloader barebox,
+Analogamente, è stato cambiato l'ordine nel bootloader Barebox,
 prioritarizzando il device `mmc2` invece che `nand`.
 
 

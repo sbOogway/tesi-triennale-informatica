@@ -7,34 +7,34 @@ configurazione globale e script per inizializzare e avviare l'intero sistema.
 
 === Comunicazione tra GUI e PID
 Per fare in modo che i moduli `temp-control` e `pid-control` comunichino
-tra di loro e stato necessario sviluppare un sistema di segnali e scrittura
+tra di loro è stato necessario sviluppare un sistema di segnali e scrittura
 e lettura su file.
 
 Quando un operatore cambia la temperatura target dall'interfaccia sul display
 LCD essa viene scritta sul file `/opt/amel/target-temperature`.
 
-Analogamente, il processo pid quando rileva una temperatura tramite i sensori
+Analogamente, il processo PID quando rileva una temperatura tramite i sensori
 DS18B20 @DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`,
 con x che rappresenta il numero del sensore sul bus. Subito dopo aver scritto,
 viene mandato un segnale a `temp-control`, che a sua volta legge il file
 e aggiorna
-la temperatura del sensore spiegato successivamente.
+la temperatura del sensore spiegata successivamente.
 
 === `logging.h`
-Per stampare a schermo in modo ordinato i messaggi dell'applicazione e stato
-implementata una semplice libreria in c che consente di loggare,
-anche con strighe formattate, ai livelli `TRACE`, `DEBUG`, `INFO`, `WARN`,
+Per stampare a schermo in modo ordinato i messaggi dell'applicazione è stato
+implementata una semplice libreria in C che consente di loggare,
+anche con stringhe formattate, ai livelli `TRACE`, `DEBUG`, `INFO`, `WARN`,
 `ERROR` e `FATAL`.
-Si puo decidere a che livello filtrare i messaggi e anche se scrivere su
+Si può decidere a che livello filtrare i messaggi e anche se scrivere su
 file nel syslog o sulla console.
 
-Per evitare che piu log si sovrascrivino a vicenda viene utilizzato un
+Per evitare che più log si sovrascrivino a vicenda viene utilizzato un
 meccanismo di mutex.
-E stata aggiunta un opzione per decidere la precisione del timer per intervalli
-di tempo sotto al secondo, utile per debuggare la regolarita del controllo pid.
+È stata aggiunta un'opzione per decidere la precisione del timer per intervalli
+di tempo sotto al secondo, utile per debuggare la regolarità del controllo PID.
 
 === `bash` templating with c preprocessor
-Per evitare duplicazioni di costanti all'interno del modulo, e stato utilizzato
+Per evitare duplicazioni di costanti all'interno del modulo, è stato utilizzato
 il preprocessore del linguaggio c in modo creativo.
 Avendo definito le configurazioni in `include/config.h`, sono state utilizzate
 come input per dei template dal quale si ricavano gli script
@@ -59,8 +59,7 @@ dagli sviluppatori della libreria.
 
 Nell'interfaccia vengono mostrate temperatura target, temperatura attuale dei
 sensori collegati sul bus one-wire e due bottoni per aumentare e diminuire
-la temperatura
-target.
+la temperatura target.
 // === Funzioni di callback nel ciclo principale della GUI LVGL
 
 #figure(
@@ -72,7 +71,7 @@ target.
       lv_label_set_text_fmt(target_temperature_label,
       target_temperature_format, target_temperature);
       write_float_to_file(TARGET_TEMPERATURE_FILE, target_temperature);
-      kill(pid_control_pid, SIGUSR1);
+      kill(PID_control_PID, SIGUSR1);
   }
 
   static void increment_temperature(lv_event_t * e)
@@ -149,7 +148,7 @@ eseguibile.
 ) <lvgl_gui>
 
 === Branches
-Per organizzare efficientemente la repository sorgente, e stato realizzato un
+Per organizzare efficientemente la repository sorgente, è stato realizzato un
 branching, creando una repository per lo sviluppo ed una per il dispositivo
 target.
 Esse sono uguali completamente tranne per il file `lv_conf.h`.
@@ -160,7 +159,7 @@ check, utili in sviluppo ma limitanti in termini di performance.
 Per la branch del dispositivo target sono stati disabilitati i sanity checks
 e utilizzata come backend il device `/dev/fb0`.
 
-Per proteggere il file `lv_conf.h` e stato aggiunto un file `.gitattributes`
+Per proteggere il file `lv_conf.h` è stato aggiunto un file `.gitattributes`
 contenente `lv_conf.h merge=ours`.
 
 Questo speciale file di git, comunica al version control system che durante
@@ -169,7 +168,7 @@ cui si sta effettuando il merge, consentendo di mantenere separate le due
 configurazioni senza preoccuparsi di sovrascriverle accidentalmente.
 
 
-== `pid-control`
+== `PID-control`
 === Sensore di temperatura
 I sensori di temperatura utilizzati sono due DS18B20 @DS18B20 collegati in parallelo
 su un bus 1-Wire.
@@ -177,24 +176,24 @@ su un bus 1-Wire.
 Il microcontrollore si comporta da master sul bus e richiede periodicamente
 la temperatura ai sensori.
 
-Il binario `pid` legge periodicamente e calcola il valore di output del
+Il binario `PID` legge periodicamente e calcola il valore di output del
 controller PID in base alla temperatura misurata e al setpoint desiderato.
 
 Inizialmente esso conta il numero di sensori sul bus, alloca la memoria
-necessaria per immagazinare gli uuid dei sensori e poi legge effetivamente
+necessaria per immagazzinare gli uuid dei sensori e poi legge effettivamente
 quest'ultimi in memoria.
 
-E stato preferito questo approccio per evitare complicazioni con `realloc`
+È stato preferito questo approccio per evitare complicazioni con `realloc`
 rispetto a leggere direttamente in un ciclo unico sia il numero di sensori
-che gli id. Questa procedura viene effettuate solamente una volta all'avvio
+che gli id. Questa procedura viene effettuata solamente una volta all'avvio
 e non ha un impatto significativo sulla performance dell'eseguibile.
 
-Un approccio senza salvare gli id dei sensori porterebbe una chiamata alla
+Un approccio senza salvare gli id dei sensori porterebbe a una chiamata alla
 funzione `DS18X20_find_sensor` ripetutamente e sarebbe uno spreco di cicli
-di cpu quindi sacrifichiamo un po di memoria per questo.
+di CPU quindi sacrifichiamo un po' di memoria per questo.
 
 #figure(
-  caption: `pid-main`,
+  caption: `PID-main`,
   sourcecode[```c
     typedef struct
     {
@@ -246,25 +245,25 @@ Per comunicare con l'inverter che controlla la ventola di raffreddamento,
 è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria
 `libmodbus` @libmodbus.
 
-=== Controllo pid
-Il controllo pid (Proporzionale, Integrale e Derivativo) e un sistema di
-retroazione negativa che permette di reagire ad un errore rispetto ad un
+=== Controllo PID
+Il controllo PID (Proporzionale, Integrale e Derivativo) è un sistema di
+retroazione negativa che permette di reagire a un errore rispetto a un
 valore target.
 
 Esso viene utilizzato per mantenere la temperatura costante nella camera
-di collaudo. Prende in input la temperatura rilevate dai sensori e la
+di collaudo. Prende in input la temperatura rilevata dai sensori e la
 temperatura desiderata
 all'interno della stanza e restituisce in output la tensione con la quale
 comunichiamo all'inverter la frequenza della ventola di raffreddamento.
 
 // Scrivere qui come abbiamo scelto i vari coefficienti PID
 
-Non e stato utilizzato il coefficiente derivativo perche
+Non è stato utilizzato il coefficiente derivativo perché
 
 ==== Monotonic clock
 
 Per campionare la temperatura nella stanza ad una frequenza costante,
-fondamentale per un corretto calcolo PID, e stato utilizzato l'header
+fondamentale per un corretto calcolo PID, è stato utilizzato l'header
 `<sys/timerfd.h>`
 della `Standard C library`.
 Queste chiamate di sistema creano e operano su un timer che consegna segnali
@@ -272,10 +271,10 @@ di scadenza del timer ad intervalli regolari tramite un file descriptor.
 
 ==== Scheduler priority
 
-E stata assegnata la massima priorita di scheduler al programma tramite
+È stata assegnata la massima priorità di scheduler al programma tramite
 l'header `<sched.h>` per evitare interrupt durante la misurazione e per
 cercare di
-mantenere piu costante possibile la periodicita del campionamento.
+mantenere più costante possibile la periodicità del campionamento.
 
 
 

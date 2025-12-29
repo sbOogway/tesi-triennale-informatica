@@ -35,21 +35,21 @@ nel tempo. In tal caso, il web server gestirà l'interazione con esso.
 
 #figure(
   image("/images/system-uml.drawio.png"),
-  caption: [Diagramma che illustea il sistema],
+  caption: [Diagramma che illustra il sistema],
 ) <system_diagram>
 
 
 == Struttura del codice sorgente
 
 Il codice sorgente del progetto è pubblicato su GitHub @root. Il codice
-sorgente è composta da più moduli:
+sorgente è composto da più moduli:
 
-- `temp-control`: responsabile per la gui scritta in LVGL.
-- `pid-control`: responsabile per il controllo pid, la rilevazione della
- temperatura e la comunicazione MODBUS rtu @libmodbus.
+- `temp-control`: responsabile per la GUI scritta in LVGL.
+- `pid-control`: responsabile per il controllo PID, la rilevazione della
+ temperatura e la comunicazione MODBUS RTU @libmodbus.
 - `common-control`: contiene funzioni helper comuni di aiuto e definizioni
-per la comunicazione tra interfaccia grafica e backend.
+ per la comunicazione tra interfaccia grafica e backend.
 
-E stato intrapreso questo approccio per garantire modularita del codice,
+È stato intrapreso questo approccio per garantire modularità del codice,
 consentendo in futuro di poter rimpiazzare ciascun modulo con relativa
-facilita, rispetto ad un approccio monolitico.
+facilità, rispetto a un approccio monolitico.
