@@ -1,6 +1,4 @@
 #import "@local/uninsubria-thesis:0.1.0": *
-#import "glossary.typ": glossary-entries
-
 
 #show: tesi-uninsubria.with(
   titolo: "Sviluppo di un sistema embedded per il controllo della temperatura in una camera di collaudo",
@@ -14,14 +12,10 @@
   anno-accademico: "2025/2026",
   corso: "CORSO DI STUDIO TRIENNALE IN INFORMATICA",
   dipartimento: "DIPARTIMENTO DI SCIENZE TEORICHE E APPLICATE",
-
-  glossary: glossary-entries, // displays the glossary terms defined in "glossary.typ"
-  language: "it", // en, de
+  language: "it", 
 )
-
 
 #include "capitoli/1_introduzione.typ"
 #include "capitoli/2_moduli.typ"
 #include "capitoli/3_embedded_linux.typ"
-// #include "capitoli/front_e_back_end.typ"
 #include "capitoli/4_conclusione.typ"
