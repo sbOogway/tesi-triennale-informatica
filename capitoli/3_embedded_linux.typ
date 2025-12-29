@@ -154,10 +154,9 @@ Per garantire la corretta sincronizzazione dell'orologio di sistema è stato
 necessario installare il client `ntpd` per il Network Time Protocol tramite
 Buildroot.
 
-
-== Custom patches a barebox e linux
+== Custom patches a `barebox` e `linux`
 A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i
-codici sorgenti di barebox e linux.
+codici sorgenti di `barebox` @barebox e `linux` @linux.
 
 È stata effettuata una clonazione della repository del kernel Linux di
 Amel ed è stato abilitato di default il modulo cp210x, modificando il file
