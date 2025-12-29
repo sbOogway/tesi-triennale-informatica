@@ -14,7 +14,7 @@ Quando un operatore cambia la temperatura target dall'interfaccia sul display
 LCD essa viene scritta sul file `/opt/amel/target-temperature`.
 
 Analogamente, il processo pid quando rileva una temperatura tramite i sensori
-DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`,
+DS18B20 @DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`,
 con x che rappresenta il numero del sensore sul bus. Subito dopo aver scritto,
 viene mandato un segnale a `temp-control`, che a sua volta legge il file
 e aggiorna
@@ -138,7 +138,7 @@ librerie fornite da Buildroot.
 
 Il comando `cmake -DCMAKE_TOOLCHAIN_FILE=./cross_compile_setup.cmake -B
 build -S .` genera i Makefile necessari per la cross-compilazione, che vengono
-poi eseguiti con `make -C build -j`.
+poi eseguiti con `make -C build -j` @cmake.
 
 LVGL viene compilata come libreria condivisa, mentre l'applicazione come
 eseguibile.
@@ -171,7 +171,7 @@ configurazioni senza preoccuparsi di sovrascriverle accidentalmente.
 
 == `pid-control`
 === Sensore di temperatura
-I sensori di temperatura utilizzati sono due DS18B20 collegati in parallelo
+I sensori di temperatura utilizzati sono due DS18B20 @DS18B20 collegati in parallelo
 su un bus 1-Wire.
 
 Il microcontrollore si comporta da master sul bus e richiede periodicamente
@@ -244,7 +244,7 @@ di cpu quindi sacrifichiamo un po di memoria per questo.
 === MODBUS RTU
 Per comunicare con l'inverter che controlla la ventola di raffreddamento,
 è stato utilizzato il protocollo MODBUS RTU tramite l'apposita libreria
-`libmodbus`.
+`libmodbus` @libmodbus.
 
 === Controllo pid
 Il controllo pid (Proporzionale, Integrale e Derivativo) e un sistema di

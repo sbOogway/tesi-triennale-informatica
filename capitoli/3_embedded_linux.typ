@@ -7,7 +7,6 @@
 La scheda utilizzata per il sistema embedded è sviluppata da AMEL e comprende:
 
 - una host-board Ganador (rev. 4) che integra:
-
   - una memoria SD utilizzata come disco fisso;
   - un'interfaccia Ethernet
   - un'interfaccia seriale
@@ -38,8 +37,8 @@ essere scritta sulla scheda SD del sistema embedded.
 Per aggiungere l'interfaccia grafica sviluppata con LVGL è stato necessario
 creare un nuovo pacchetto in Buildroot.
 
-All'avvio del sistema, il bootloader del chip attiva AT91bootstrap, che a
-sua volta avvia Barebox, il quale carica il kernel in memoria.
+All'avvio del sistema, il bootloader del chip attiva AT91bootstrap @at91bootstrap, che a
+sua volta avvia Barebox @barebox, il quale carica il kernel in memoria.
 
 == Personalizzazione di buildroot
 
@@ -66,7 +65,7 @@ del dispositivo target.
   define AMEL_TEMP_CONTROL_BUILD_CMDS
 	cmake -DCMAKE_TOOLCHAIN_FILE=$(@D)/user_cross_compile_setup.cmake \
 	  -B $(@D)/build -S $(@D)
-	make -C $(@D)/build -j
+	make -C $(@D)/build -j @cmake
 
   endef
 
@@ -123,7 +122,7 @@ Analogamente, è stato creato il pacchetto `amel-pid-control` per
 cross-compilare e installare la libreria PID sviluppata in C++.
 
 === Modifica pacchetti networking
-E stata creata una rete virtuale ed e stato aggiunto un ssh server per
+E stata creata una rete virtuale ed e stato aggiunto un ssh server @openssh per
 consentire il collegamento remoto al dispositivo embedded.
 E stato necessario modificare lo script in `/etc/init.d/S50network` per
 configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico
@@ -137,7 +136,7 @@ Inoltre, la rete virtuale e stata create in modo da condividere l accesso
 ad internet e dopo aver impostato come default gateway il pc creatore della
 rete bridge e possibile accedere alla rete globale dal sistema embedded.
 E stato utilizzato il dns server di google `8.8.8.8`.
-L'accesso ad internet e necessario per la configurazione di NTP, come
+L'accesso ad internet e necessario per la configurazione di NTP @ntp, come
 descritto in seguito.
 
 === Installazione del modulo c210x per la porta seriale

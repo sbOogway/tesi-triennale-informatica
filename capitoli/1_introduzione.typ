@@ -17,7 +17,7 @@ proporzionale) e a quello accumulato (azione integrativa).
 mantenere costante la temperatura ambiente.
 
 La comunicazione tra l'inverter e il sistema embedded avviene tramite il
-protocollo MODBUS RTU.
+protocollo MODBUS RTU @libmodbus.
 
 Il sistema embedded fornisce inoltre un'interfaccia per regolare la temperatura
 target dell'ambiente mediante un display touchscreen. La GUI è sviluppata
@@ -46,7 +46,7 @@ sorgente è composta da più moduli:
 
 - `temp-control`: responsabile per la gui scritta in LVGL.
 - `pid-control`: responsabile per il controllo pid, la rilevazione della
-temperatura e la comunicazione MODBUS rtu.
+ temperatura e la comunicazione MODBUS rtu @libmodbus.
 - `common-control`: contiene funzioni helper comuni di aiuto e definizioni
 per la comunicazione tra interfaccia grafica e backend.
 
