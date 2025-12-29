@@ -1,8 +1,6 @@
 = Introduzione
 
 == Abstract
-
-
 La camera di collaudo, situata presso AMEL s.r.l., è utilizzata per testare carichi resistivi. Questi producono calore, rendendo necessario il raffreddamento dell'ambiente, soprattutto nei mesi più caldi.
 
 Il sistema embedded controlla la frequenza di una ventola di raffreddamento mediante un controllo PID:
@@ -34,6 +32,6 @@ Il codice sorgente del progetto è pubblicato su GitHub @root. Il codice sorgent
 
 - `temp-control`: responsabile per la gui scritta in LVGL.
 - `pid-control`: responsabile per il controllo pid, la rilevazione della temperatura e la comunicazione MODBUS rtu.
-- `common-control`: contente funzioni helper comuni di aiuto e definizioni per la comunicazione tra interfaccia grafica e backend.
+- `common-control`: contiene funzioni helper comuni di aiuto e definizioni per la comunicazione tra interfaccia grafica e backend.
 
 E stato intrapreso questo approccio per garantire modularita del codice, consentendo in futuro di poter rimpiazzare ciascun modulo con relativa facilita, rispetto ad un approccio monolitico.

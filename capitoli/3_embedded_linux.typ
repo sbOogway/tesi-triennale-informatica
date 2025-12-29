@@ -24,8 +24,6 @@ La scheda utilizzata per il sistema embedded è sviluppata da AMEL e comprende:
   - TFT LCD Controller with TTL / LVDS support
 
 
-
-
 == Costruzione del sistema
 
 Per orchestrare il sistema è stato utilizzato Linux. È stato creato un kernel personalizzato con soli i moduli essenziali per il funzionamento, data la limitatezza delle risorse hardware. Lo strumento utilizzato per completare l'opera è Buildroot @buildroot, che consiste essenzialmente in una serie di Makefile per installare e cross-compilare tutte le librerie e i pacchetti necessari alla costruzione e all'esecuzione del sistema. Inoltre, si occupa di creare il filesystem e di prepararlo in un'immagine pronta per essere scritta sulla scheda SD del sistema embedded.
@@ -40,7 +38,9 @@ Per aggiungere un pacchetto a Buildroot è necessario inserire una nuova voce ne
 
 Questi due file contengono le istruzioni che consentono a Buildroot di risolvere le dipendenze, scaricare e installare il pacchetto nel filesystem del dispositivo target.
 
-=== Il pacchetto amel-temp-control
+=== Il pacchetto `amel-common-control`
+
+=== Il pacchetto `amel-temp-control`
 #figure(
   caption: "amel-temp-control.mk",
   sourcecode()[```bash
@@ -75,7 +75,7 @@ Successivamente, vengono cross-compilate la libreria LVGL e l'applicazione con i
 
 Infine, i binari della libreria e l'eseguibile dell'applicazione vengono installati sulla macchina target.
 
-=== Il pacchetto amel-pid
+=== Il pacchetto `amel-pid`
 #figure(
   caption: "amel-pid-control.mk",
   sourcecode[```bash
@@ -119,7 +119,7 @@ Per consentire la comunicazione seriale tramite la porta RS-232 della host-board
 Il modulo e stato aggiunto tramite il menu di configurazione di Buildroot, selezionandolo in `Kernel modules -> USB Serial Converter support -> USB CP210x family of UART Bridge Controllers` dal comando `make linux-menuconfig`.
 
 === Il pacchetto NTP
-Per garantire la corretta sincronizzazione dell-orologio di sistema e stato necessario installare un client per il Network Time Protocol tramite buildroot.
+Per garantire la corretta sincronizzazione dell-orologio di sistema e stato necessario installare il client `ntpd` per il Network Time Protocol tramite buildroot.
 
 
 == Custom patches a barebox e linux
@@ -127,6 +127,6 @@ A causa dei rebuild frequenti in fase di sviluppo, sono stati patchati i codici 
 
 E stata effettuata una clonazione della repository del kernel linux di amel ed e stato abilitato di default il modulo cp210x, modificando il file `/drivers/usb/serial/Kconfig`.
 
-Analogamente, e stato cambiato l ordine nel bootloader barebox, prioritarizzando il device `mmc2` invece che nand.
+Analogamente, e stato cambiato l ordine nel bootloader barebox, prioritarizzando il device `mmc2` invece che `nand`.
 
 
