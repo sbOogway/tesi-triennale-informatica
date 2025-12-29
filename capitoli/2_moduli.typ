@@ -14,7 +14,8 @@ Quando un operatore cambia la temperatura target dall'interfaccia sul display
 LCD essa viene scritta sul file `/opt/amel/target-temperature`.
 
 Analogamente, il processo PID quando rileva una temperatura tramite i sensori
-DS18B20 @DS18B20, scrive quest'ultima sul file `/opt/amel/current-temperature/sX`,
+DS18B20 @DS18B20, scrive quest'ultima sul file
+`/opt/amel/current-temperature/sX`,
 con x che rappresenta il numero del sensore sul bus. Subito dopo aver scritto,
 viene mandato un segnale a `temp-control`, che a sua volta legge il file
 e aggiorna
@@ -30,11 +31,14 @@ file nel syslog o sulla console.
 
 Per evitare che più log si sovrascrivino a vicenda viene utilizzato un
 meccanismo di mutex.
-È stata aggiunta un'opzione per decidere la precisione del timer per intervalli
-di tempo sotto al secondo, utile per debuggare la regolarità del controllo PID.
+È stata aggiunta un'opzione per decidere la precisione del timer per
+intervalli
+di tempo sotto al secondo, utile per debuggare la regolarità del controllo
+PID.
 
 === `bash` templating with c preprocessor
-Per evitare duplicazioni di costanti all'interno del modulo, è stato utilizzato
+Per evitare duplicazioni di costanti all'interno del modulo, è stato
+utilizzato
 il preprocessore del linguaggio c in modo creativo.
 Avendo definito le configurazioni in `include/config.h`, sono state utilizzate
 come input per dei template dal quale si ricavano gli script
@@ -170,7 +174,8 @@ configurazioni senza preoccuparsi di sovrascriverle accidentalmente.
 
 == `PID-control`
 === Sensore di temperatura
-I sensori di temperatura utilizzati sono due DS18B20 @DS18B20 collegati in parallelo
+I sensori di temperatura utilizzati sono due DS18B20 @DS18B20 collegati
+in parallelo
 su un bus 1-Wire.
 
 Il microcontrollore si comporta da master sul bus e richiede periodicamente

@@ -37,7 +37,8 @@ essere scritta sulla scheda SD del sistema embedded.
 Per aggiungere l'interfaccia grafica sviluppata con LVGL è stato necessario
 creare un nuovo pacchetto in Buildroot.
 
-All'avvio del sistema, il bootloader del chip attiva AT91bootstrap @at91bootstrap, che a
+All'avvio del sistema, il bootloader del chip attiva AT91bootstrap
+@at91bootstrap, che a
 sua volta avvia Barebox @barebox, il quale carica il kernel in memoria.
 
 == Personalizzazione di buildroot
@@ -122,7 +123,8 @@ Analogamente, è stato creato il pacchetto `amel-pid-control` per
 cross-compilare e installare la libreria PID sviluppata in C++.
 
 === Modifica pacchetti networking
-È stata creata una rete virtuale ed è stato aggiunto un SSH server @openssh per
+È stata creata una rete virtuale ed è stato aggiunto un SSH server
+@openssh per
 consentire il collegamento remoto al dispositivo embedded.
 È stato necessario modificare lo script in `/etc/init.d/S50network` per
 configurare l'interfaccia di rete virtuale `eth0` con un indirizzo IP statico
