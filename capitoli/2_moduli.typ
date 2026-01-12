@@ -64,6 +64,18 @@ manda il segnale a `temp-control` e i due main iniziano l'esecuzione,
 comunicando update in temperatura target e temperatura attuale tramite
 segnali con il comando `kill`.
 
+
+=== Web server CGI
+Per monitorare e controllare il sistema da remoto è stato implementato
+un semplice web server CGI @cgi che mostra la temperatura attuale e
+consente di modificare la temperatura target tramite due bottoni. Il
+server web è ospitato direttamente sul dispositivo embedded e
+comunica con i moduli `temp-control` e `pid-control` leggendo e
+scrivendo sui file di interfaccia.
+
+// Descrivere come funziona il server web e i file cgi
+// Aggiungere screenshot dell'interfaccia web
+
 == `temp-control`
 
 Per controllare la temperatura della camera di collaudo, l'operatore imposta
