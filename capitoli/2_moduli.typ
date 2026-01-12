@@ -67,7 +67,7 @@ segnali con il comando `kill`.
 
 === Web server CGI
 Per monitorare e controllare il sistema da remoto è stato implementato
-un semplice web server CGI @cgi che mostra la temperatura attuale e
+un semplice web server CGI che mostra la temperatura attuale e
 consente di modificare la temperatura target tramite due bottoni. Il
 server web è ospitato direttamente sul dispositivo embedded e
 comunica con i moduli `temp-control` e `pid-control` leggendo e
