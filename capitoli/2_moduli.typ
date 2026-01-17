@@ -271,7 +271,13 @@ di CPU quindi sacrifichiamo un po' di memoria per questo.
    ```],
 )
 
-Il controllo di integrità dei dati letti dai sensori DS18B20 viene effettuato mediante l'algoritmo CRC-8, implementato nella funzione `crc8`. Tale funzione utilizza il polinomio 0x18, corrispondente a \(x^8 + x^5 + x^4 + x^0\), per calcolare il checksum sui dati dello scratchpad. Questo permette di verificare che i dati ricevuti dal sensore non siano corrotti durante la trasmissione sul bus 1-Wire. In caso di errore CRC, la lettura viene scartata e può essere ritentata.
+Il controllo di integrità dei dati letti dai sensori DS18B20 viene effettuato
+mediante l'algoritmo CRC-8, implementato nella funzione `crc8`. Tale
+funzione utilizza il polinomio 0x18, corrispondente a \(x^8 + x^5 + x^4 +
+x^0\), per calcolare il checksum sui dati dello scratchpad. Questo permette
+di verificare che i dati ricevuti dal sensore non siano corrotti durante la
+trasmissione sul bus 1-Wire. In caso di errore CRC, la lettura viene scartata
+e può essere ritentata.
 
 === MODBUS RTU
 Per comunicare con l'inverter che controlla la ventola di raffreddamento,
@@ -313,4 +319,10 @@ campionamento.
 
 === Logging and Monitoring
 
-Per monitorare e registrare l'andamento del controllo PID nel tempo, è stata implementata una funzionalità di logging su file CSV. All'avvio del programma, viene creato un file CSV con un nome basato sul timestamp corrente, contenente un'intestazione con le colonne per il tempo, la temperatura target, le temperature dei singoli sensori e l'output del PID. Ad ogni ciclo del controllo, vengono aggiunti i valori attuali al file, permettendo un'analisi successiva dei dati mediante strumenti di analisi o fogli di calcolo.
+Per monitorare e registrare l'andamento del controllo PID nel tempo, è
+stata implementata una funzionalità di logging su file CSV. All'avvio del
+programma, viene creato un file CSV con un nome basato sul timestamp corrente,
+contenente un'intestazione con le colonne per il tempo, la temperatura target,
+le temperature dei singoli sensori e l'output del PID. Ad ogni ciclo del
+controllo, vengono aggiunti i valori attuali al file, permettendo un'analisi
+successiva dei dati mediante strumenti di analisi o fogli di calcolo.
