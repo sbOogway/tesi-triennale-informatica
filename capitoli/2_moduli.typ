@@ -271,6 +271,7 @@ di CPU quindi sacrifichiamo un po' di memoria per questo.
    ```],
 )
 
+==== CRC-8
 Il controllo di integrità dei dati letti dai sensori DS18B20 viene effettuato
 mediante l'algoritmo CRC-8, implementato nella funzione `crc8`. Tale
 funzione utilizza il polinomio 0x18, corrispondente a \(x^8 + x^5 + x^4 +
@@ -295,9 +296,6 @@ temperatura desiderata
 all'interno della stanza e restituisce in output la tensione con la quale
 comunichiamo all'inverter la frequenza della ventola di raffreddamento.
 
-// Scrivere qui come abbiamo scelto i vari coefficienti PID
-
-Non è stato utilizzato il coefficiente derivativo perché
 
 ==== Monotonic clock
 

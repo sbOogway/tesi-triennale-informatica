@@ -20,4 +20,5 @@
 #include "capitoli/1_introduzione.typ"
 #include "capitoli/2_moduli.typ"
 #include "capitoli/3_embedded_linux.typ"
-#include "capitoli/4_conclusione.typ"
+#include "capitoli/4_installazione.typ"
+#include "capitoli/5_conclusione.typ"
