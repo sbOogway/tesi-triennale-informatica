@@ -1,4 +1,4 @@
-#import "@local/uninsubria-thesis:0.1.0": sourcecode
+#import "@preview/unofficial-uninsubria-thesis:0.1.0": sourcecode
 
 = Embedded Linux
 
@@ -129,7 +129,7 @@ installati sulla macchina target.
 
 === Il pacchetto `amel-pid`
 #figure(
-  caption: "amel-pid-control.mk",
+  caption: `amel-pid-control.mk`,
   sourcecode[```bash
      AMEL_PID_VERSION = v0.0.3
      AMEL_PID_SITE = git@git.amelchem.com:mpapaccioli/pid.git

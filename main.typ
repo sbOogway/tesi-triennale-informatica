@@ -1,4 +1,4 @@
-#import "@local/uninsubria-thesis:0.1.0": *
+#import "@preview/unofficial-uninsubria-thesis:0.1.0": *
 
 
 #show: tesi-uninsubria.with(
