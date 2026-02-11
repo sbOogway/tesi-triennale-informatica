@@ -142,9 +142,9 @@ index 5ef032142c..7397e2d034 100644
 )
 
 == Inizializzazione ed avviamento
-Una volte effettuato l accesso al dispositivo, dobbiamo spostarci nella 
-cartella `/opt/amel/`. Da qui, possiamo impostare il file `config.env`, 
+Una volte effettuato l accesso al dispositivo, dobbiamo spostarci nella
+cartella `/opt/amel/`. Da qui, possiamo impostare il file `config.env`,
 dove sono presenti le variabili di ambiente per impostare il sistema.
-Una volta impostate, e possibile effettuare l'inizializzazione avviando 
+Una volta impostate, e possibile effettuare l'inizializzazione avviando
 lo script `init.sh`. Esso si occupa di creare i file e le cartelle necessari
-per 
+per
