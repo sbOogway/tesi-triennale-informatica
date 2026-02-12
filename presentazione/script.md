@@ -6,11 +6,9 @@
 
 ## Slide 1: Titolo (30 secondi)
 
-*"Buongiorno a tutti. Oggi vi presenterò il mio progetto di tesi triennale, sviluppato presso AMEL s.r.l., azienda leader nella produzione di trasformatori elettrici."*
+*"Buongiorno a tutti. Oggi vi presenterò il mio progetto di tesi triennale, sviluppato presso AMEL s.r.l."*
 
 *"Il progetto riguarda lo sviluppo di un sistema embedded per il controllo automatico della temperatura in una camera di collaudo, utilizzando un algoritmo PID."*
-
-*"Relatore della tesi è il Professor Carlo Dossi."*
 
 ---
 
