@@ -10,3 +10,6 @@ format:
 
 build:
 	typst c main.typ
+
+presentation:
+	cd presentazione && typst compile --root .. slides.typ slides.pdf
