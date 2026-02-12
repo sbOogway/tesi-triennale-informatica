@@ -12,10 +12,27 @@ tutto per vedere dove si rompe.
 Questo progetto mi ha insgnato molto. Anche se non centrale allo sviluppo
 del progetto ho imparato molto sul software `git`, che mi servira molto nel
 susseguirsi della mia carriera.
+
 Inoltre ho esplorato ed approfondito in dettaglio i microcontrollori, che
 personalmente mi piacciono molto.
+
 Ho imparato nozioni di ingegneria elettrica, che anche se non oggetto nel
 mio corso di studio si interlacciano con i microcontrollori.
+
 Ho provato con mano cosa significa applicare protocolli industriali come
 modbus, e vedere che con il mio computer posso far girare una ventola di
 grandi dimensioni mi ha gasato un botto.
+
+== Ringraziamenti
+Ringrazio AMEL s.r.l. per avermi dato l'opportunità di lavorare su
+questo progetto, e in particolare a Edoardo per il supporto tecnico e la
+collaborazione durante lo sviluppo. Un grazie anche a tutti i colleghi di
+AMEL per l'accoglienza e l'ambiente di lavoro stimolante.
+
+Ringrazio inoltre i miei professori, specialmente il prof Dossi e i compagni
+di corso per il supporto accademico e le discussioni che hanno arricchito
+la mia esperienza universitaria.
+
+Infine, un grazie speciale alla mia famiglia per il sostegno continuo durante
+tutto il percorso di studi nonostante le sfide e le difficoltà incontrate.
+

@@ -28,10 +28,7 @@ attraverso un web server sarà possibile regolare la temperatura target
 anche da remoto.
 
 La comunicazione tra il sistema embedded e il web server avviene mediante
-scrittura su file o IPC (Inter-Process Communication).
-
-È ancora da valutare l'impiego di un database per registrare la temperatura
-nel tempo. In tal caso, il web server gestirà l'interazione con esso.
+scrittura su file.
 
 #figure(
   image("/images/system-uml.drawio.png"),
@@ -41,8 +38,7 @@ nel tempo. In tal caso, il web server gestirà l'interazione con esso.
 
 == Struttura del codice sorgente
 
-Il codice sorgente del progetto è pubblicato su GitHub @root. Il codice
-sorgente è composto da più moduli:
+Il codice sorgente è composto da più moduli:
 
 - `common-control`: contiene funzioni helper comuni di aiuto e definizioni
  per la comunicazione tra interfaccia grafica e backend.

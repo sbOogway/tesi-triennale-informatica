@@ -145,6 +145,20 @@ index 5ef032142c..7397e2d034 100644
 Una volte effettuato l accesso al dispositivo, dobbiamo spostarci nella
 cartella `/opt/amel/`. Da qui, possiamo impostare il file `config.env`,
 dove sono presenti le variabili di ambiente per impostare il sistema.
+Per calibrare lo schermo in con `lvgl` e necessario impostare le variabili
+`LV_MIN_X`, `LV_MIN_Y`, `LV_MAX_X`, `LV_MAX_Y` con i valori corretti ottenuti
+calibrando lo schermo e premendo il touch screen agli angoli con
+`evtest /dev/input/event0`.
+
 Una volta impostate, e possibile effettuare l'inizializzazione avviando
-lo script `init.sh`. Esso si occupa di creare i file e le cartelle necessari
-per
+lo script `init.sh`. Esso si occupa di creare i file e le cartelle necessari.
+
+Per avviare il sistema, basta eseguire lo script `run.sh`, che si occupa di
+avviare i processi necessari per il funzionamento.
+
+Per fermare il sistema, basta eseguire lo script `kill.sh`, che si occupa
+di fermare i processi avviati da `run.sh`.
+
+I log del sistema sono disponibili nella cartella `/opt/amel/logs/`, dove
+sono presenti i log dei processi avviati da `run.sh`.
+
