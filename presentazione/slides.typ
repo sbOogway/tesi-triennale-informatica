@@ -61,22 +61,17 @@
 
 // Slide 1: Titolo
 #slide("Sviluppo di un sistema embedded per il controllo della temperatura in camera di collaudo")[
+  #set text(size: 21pt)
   #align(left)[
     #v(1cm)
     
-    *Tutor Universitario:* Prof. Carlo Dossi
-
-    *Tutor Aziendale:* Edoardo Scaglia
-
-    *Candidato:* Mattia Papaccioli - 747053
-    
-    #v(0.3cm)
-    
-    AMEL s.r.l. x Università degli Studi dell'Insubria
-    
-    #v(1cm)
-    
-    #text(size: 14pt)[Discussione di Laurea Triennale]
+    #grid(
+      columns: (auto, auto),
+      gutter: 0.5cm,
+      [*Tutor Universitario:*], [Prof. Carlo Dossi],
+      [*Tutor Aziendale:*], [Edoardo Scaglia - AMEL s.r.l.],
+      [*Candidato:*], [Mattia Papaccioli - 747053]
+    )
   ]
 ]
 
@@ -347,8 +342,6 @@
     *Università degli Studi dell'Insubria*
     
     *Professore Carlo Dossi* per la supervisione accademica
-    
-    #v(0.5cm)
     
     *Famiglia e amici*
     

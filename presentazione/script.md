@@ -10,7 +10,7 @@
 
 *"Il progetto riguarda lo sviluppo di un sistema embedded per il controllo automatico della temperatura in una camera di collaudo, utilizzando un algoritmo PID."*
 
-*"Relatore della tesi è il Dottor Walter Dossi."*
+*"Relatore della tesi è il Professor Carlo Dossi."*
 
 ---
 
@@ -44,7 +44,7 @@
 
 *"Il system-on-module Vulcano-A5 integra una CPU ARM9 a 400MHz con 128MB di RAM e 256MB di flash, risorse limitate ma sufficienti per il nostro scopo."*
 
-*"Come periferiche abbiamo due sensori di temperatura DS18B20, un inverter ACS310 per il controllo della ventola, e un adattatore USB-seriale per la comunicazione Modbus."*
+*"Come periferiche abbiamo un sensore di temperatura DS18B20, un inverter ACS310 per il controllo della ventola, e un adattatore USB-seriale per la comunicazione Modbus."*
 
 ---
 
@@ -54,7 +54,7 @@
 
 *"Il modulo temp-control gestisce l'interfaccia grafica LVGL sul touchscreen. Il modulo pid-control si occupa del controllo PID, della lettura dei sensori e della comunicazione Modbus. Il modulo common-control fornisce funzioni di logging e utility condivise."*
 
-*"La comunicazione tra i moduli avviene tramite file condivisi nella directory /opt/amel/. Quando la temperatura target viene modificata dall'utente, viene scritta su file e inviato un segnale UNIX al processo PID. Analogamente, quando il PID rileva una nuova temperatura, la scrive su file e notifica la GUI."*
+*"La comunicazione tra i moduli avviene tramite file condivisi nella directory /opt/amel/. Quando la temperatura target viene modificata dall'utente, viene scritta su file e successivamente viene letta dal processo PID. Analogamente, quando il PID rileva una nuova temperatura, la scrive su file."*
 
 *"Questo approccio garantisce modularità e permette di sostituire singoli componenti senza modificare l'intero sistema."*
 
@@ -142,7 +142,7 @@
 
 *"Infine, un grazie speciale alla mia famiglia per il sostegno durante tutto il percorso di studi."*
 
-*"Grazie per l'attenzione. Sono disponibile per eventuali domande."*
+*"Grazie per l'attenzione."*
 
 ---
 
