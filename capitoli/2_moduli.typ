@@ -41,7 +41,6 @@ del sensore sul bus
 4. Dopo ogni scrittura, `pid-control` invia un segnale Unix al processo
 `temp-control`
 5. Il modulo `temp-control`, alla ricezione del segnale, legge i file
-aggiornati
 e aggiorna l'interfaccia grafica
 
 Questo approccio ibrido consente una comunicazione affidabile anche in
@@ -132,8 +131,6 @@ La comunicazione tra il server web e i moduli del sistema avviene attraverso le
 stesse primitive di file system utilizzate per la comunicazione inter-modulare,
 garantendo coerenza nell'accesso ai dati.
 
-// Descrivere come funziona il server web e i file cgi
-// Aggiungere screenshot dell'interfaccia web
 
 == Il modulo `temp-control`
 
@@ -157,58 +154,15 @@ operativi Linux, messo a disposizione dagli sviluppatori stessi della libreria.
 
 L'interfaccia principale presenta le seguenti informazioni:
 - La temperatura target impostata dall'operatore
-- Le temperature attuali rilevate dai sensori connessi al bus One-Wire
-- Due pulsanti per l'incremento e il decremento della temperatura target
+- La temperatura attuale rilevata dal sensore sul bus One-Wire
+- Uno slider per impostare la temperatura target oppure la velocita della
+ventola
+- Uno switch per selezionare la modalita di controllo automatico oppure
+manuale della ventola.
 
 La disposizione degli elementi è stata progettata per garantire la massima
-leggibilità anche in condizioni di scarsa illuminazione della camera di
-collaudo.
+leggibilità e usabilita.
 
-=== Gestione degli eventi di interazione
-
-#figure(
-  sourcecode[```c
-  void set_target_temperature(float t)
-  {
-      LOG_DEBUG("debug callback -> %.1f\n", target_temperature);
-      target_temperature += t;
-      lv_label_set_text_fmt(target_temperature_label,
-      target_temperature_format, target_temperature);
-      write_float_to_file(TARGET_TEMPERATURE_FILE, target_temperature);
-      kill(PID_control_PID, SIGUSR1);
-  }
-
-  static void increment_temperature(lv_event_t * e)
-  {
-      if(lv_event_get_code(e) != LV_EVENT_CLICKED) {
-          return;
-      }
-      set_target_temperature(1);
-  }
-
-  static void decrement_temperature(lv_event_t * e)
-  {
-      if(lv_event_get_code(e) != LV_EVENT_CLICKED) {
-          return;
-      }
-      set_target_temperature(-1);
-  }
-  ```],
-  caption: "Funzioni di callback per la gestione dei pulsanti di incremento
-  e decremento della temperatura target",
-)
-
-Quando l'operatore preme uno dei pulsanti per modificare la temperatura
-target, il sistema esegue la seguente sequenza di operazioni:
-1. Viene invocata la funzione di callback corrispondente all'evento di click
-2. La funzione `set_target_temperature` aggiorna il valore della variabile
-interna
-3. L'etichetta grafica (label) che visualizza la temperatura target viene
-aggiornata
-4. Il nuovo valore viene scritto nel file di interfaccia per la comunicazione
-con il modulo PID
-5. Viene inviato un segnale Unix al processo `pid-control` per notificare
-il cambiamento
 
 === Backend per l'input/output
 
@@ -303,20 +257,18 @@ controllo PID e della comunicazione con l'attuatore (l'inverter della ventola).
 
 === Acquisizione dati dai sensori di temperatura
 
-I sensori di temperatura utilizzati sono due dispositivi DS18B20 @DS18B20,
-collegati in configurazione parallela su un bus 1-Wire. Questa topologia
-consente di collegare multiple unità di misura utilizzando un'unica linea
-dati.
+Il sensore di temperatura utilizzato e un dispositivo DS18B20 @DS18B20
+su un bus 1-Wire.
 
 Il microcontrollore agisce come master sul bus, interrogando periodicamente
-i sensori per ottenere le misurazioni di temperatura. L'eseguibile PID esegue
+il sensore per ottenere le misurazioni di temperatura. L'eseguibile PID esegue
 ciclicamente le seguenti operazioni:
-1. Lettura della temperatura dai sensori
+1. Lettura della temperatura dal sensore
 2. Calcolo dell'output del controllore PID in base alla temperatura misurata
 e al setpoint desiderato
 3. Aggiornamento del comando per l'inverter
 
-La procedura di inizializzazione dei sensori avviene in tre fasi distinte:
+La procedura di inizializzazione dei sensore avviene in tre fasi distinte:
 1. Conteggio del numero di sensori presenti sul bus
 2. Allocazione della memoria necessaria per memorizzare gli identificatori
 univoci (UUID) dei sensori

@@ -236,7 +236,7 @@ di ricompilazione frequenti.
 Le personalizzazioni effettuate sono state le seguenti:
 
 - *Kernel Linux*: è stata creata una copia del repository del kernel Linux
-mantenuto da AMel. All'interno di questo repository, il modulo `cp210x` è
+mantenuto da Amel. All'interno di questo repository, il modulo `cp210x` è
 stato abilitato di default modificando il file di configurazione
 `/drivers/usb/serial/Kconfig`. Questa modifica evita la necessità di
 riconfigurare manualmente il modulo ad ogni ricompilazione del kernel.

@@ -45,8 +45,7 @@ della camera di collaudo per generare calore in modo controllato.
 50°C, creando così le condizioni necessarie per testare il sistema di
 raffreddamento.
 
-3. *Monitoraggio della temperatura*: sono stati utilizzati due sensori in
-parallelo:
+3. *Monitoraggio della temperatura*: sono stati utilizzati due sensori:
   - Il sensore digitale DS18B20, precedentemente descritto, per l'acquisizione
   dei dati utilizzati dal controllore PID
   - Un termistore già presente nella camera, utilizzato come riferimento

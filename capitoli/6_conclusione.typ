@@ -44,8 +44,9 @@ favorendo il lavoro in team e la tracciabilità delle modifiche.
 
 === Architetture embedded
 
-Lo studio approfondito dei microcontrollori, con particolare riferimento
-alla famiglia ESP32, ha permesso di acquisire conoscenze relative a:
+Lo studio approfondito dei microcontrollori, ha permesso di acquisire
+conoscenze
+relative a:
 - La programmazione a basso livello e la gestione delle risorse hardware
 limitate
 - L'interfacciamento con periferiche esterne attraverso bus di comunicazione
@@ -82,14 +83,14 @@ Desidero esprimere la mia gratitudine ad AMEL s.r.l. per avermi offerto
 l'opportunità di sviluppare questo progetto in un contesto aziendale
 stimolante e professionale.
 
-Un ringraziamento particolare va a Edoardo [Cognome] per il prezioso supporto
+Un ringraziamento particolare va a Edoardo Scaglia per il prezioso supporto
 tecnico e la collaborazione costante durante tutte le fasi di sviluppo,
 dalla progettazione alla messa in opera. Estendo i miei ringraziamenti a
 tutti i colleghi dell'azienda per l'accoglienza ricevuta e per l'ambiente
 di lavoro favorevole allo scambio di conoscenze.
 
 Vorrei inoltre ringraziare i docenti del Corso di Laurea in Ingegneria
-Informatica, in particolare il Professor [Nome] Dossi per la supervisione
+Informatica, in particolare il Professor Carlo Dossi per la supervisione
 accademica e la disponibilità dimostrata durante il percorso di tesi. Un
 sentito grazie anche ai compagni di corso, con cui le discussioni e il
 confronto hanno arricchito significativamente la mia esperienza universitaria.
