@@ -2,61 +2,178 @@
 
 = Manuale utente
 
-== Compilazione da `buildroot`
-Innanzitutto e necessario cloneare la repo git
-`git@git.amelchem.com:amel/buildroot.git`
-con il comando `git clone git@git.amelchem.com:amel/buildroot.git` opppure
-`git clone https://git.amelchem.com/amel/buildroot.git` e fare checkout
-nel branch
-`Vulcano-papaccioli`.
-Successivamente bisogna far partire la compilazione di `buildroot` con il
-comando `make`,
-che comprende `linux`, `barebox` e tutto cio di necessario per il sistema
+Il presente capitolo fornisce le istruzioni dettagliate per la configurazione
+e l'utilizzo del sistema di controllo temperatura. Tale manuale è strutturato
+in quattro sezioni principali: la compilazione del sistema operativo mediante
+Buildroot, la preparazione della scheda di memoria SD, la configurazione del
+dispositivo embedded e, infine, le procedure di inizializzazione e avvio del
+sistema.
+
+== Compilazione del sistema operativo tramite Buildroot
+
+La prima fase del processo di configurazione richiede la compilazione del
+sistema operativo embedded. Questa operazione viene effettuata mediante
+Buildroot, un framework open-source per la generazione di sistemi Linux
 embedded.
-La prima compilazione puo durare anche 1 ora a causa dei tanti pacchetti
-da scaricare
-ed installare. Sono necessari all'incirca 20GB di memoria disponibile sul
-disco fisso.
 
-== Flashing scheda sdcard
-Dopo aver compilato, si popolera la cartella `output` di `buildroot` con i
-file necessari.
-Dobbiamo copiare bit per bit il file `output/images/sdcard.img` sulla memory
-card con il comando
-`sudo dd if=output/images/sdcard.img of=/dev/mmcblk0 bs=4M status=progress
-conv=fsync`.
-Cambia i path e i nomi in base alla tua macchina.
+=== Procedura di clonazione del repository
 
-== Embedded
-Estrai la scheda sd dal computer ed introducila nella board `Ganador` nello
-slot apposito.
-Aspetta 1 minuto circa per il sistema che si avvii e si installi (generazione
-ssh keys 30 sec circa).
-A questo punto abbiamo due opzioni per connetterci: tramite porta seriale o
-`ssh`.
+Inizialmente, è necessario ottenere il codice sorgente del progetto. Il
+repository Git è ospitato presso il server dell'azienda ed è accessibile
+tramite due modalità:
 
-=== Porta seriale
-Per connetterci tramite la porta seriale, abbiamo bisogno di un adattatore
-seriale usb // inserisci qui nome adattatore i think rs322
-e di un emulatore di console seriale, come per esemptio `minicom`.
-Dopo aver collegato l' usb al computer e i pin dell adattatore come nella
-figura seguente lanciamo `minicom` specificando il nome del device,
-per esmpio in linux `/dev/ttyUSB0`.
+- *Modalità SSH* (consigliata per gli sviluppatori con chiavi configurate):
+  `git clone git@git.amelchem.com:amel/buildroot.git`
+
+- *Modalità HTTPS* (alternativa generale):
+  `git clone https://git.amelchem.com/amel/buildroot.git`
+
+Una volta completata la clonazione, è fondamentale posizionarsi sul branch
+corretto denominato `Vulcano-papaccioli`. Questo branch contiene la
+configurazione specifica per la board utilizzata nel progetto.
+
+=== Processo di compilazione
+
+Dopo aver effettuato il checkout sul branch corretto, si può avviare il
+processo di compilazione mediante il comando `make`. Tale comando eseguirà
+automaticamente la compilazione di tutti i componenti necessari, tra cui:
+
+- Il kernel Linux ottimizzato per l'architettura target
+- Il bootloader Barebox per la gestione dell'avvio
+- Tutti i pacchetti e le dipendenze richieste dal sistema
+
+*Considerazioni importanti sulla compilazione:*
+
+1. *Durata:* la prima compilazione richiede circa un'ora, poiché Buildroot
+   deve scaricare e compilare tutti i pacchetti dalla fonte.
+
+2. *Spazio su disco:* sono necessari almeno 20 GB di spazio libero sul disco
+   rigido per ospitare i sorgenti scaricati, i file oggetto intermedi e le
+   immagini finali del sistema.
+
+3. *Connessione di rete:* durante il processo è richiesta una connessione
+   Internet stabile per il download dei pacchetti.
+
+== Preparazione della scheda di memoria SD
+
+Al termine della compilazione, Buildroot genera nella directory `output`
+tutti i file necessari per il deployment del sistema. In particolare, il
+file `output/images/sdcard.img` rappresenta l'immagine completa del sistema
+operativo pronta per essere installata sulla scheda di memoria.
+
+=== Procedura di scrittura dell'immagine
+
+Per trasferire l'immagine sulla scheda SD è necessario utilizzare il comando
+`dd`, che effettua una copia bit-per-bit del file. Tale approccio garantisce
+la preservazione esatta di tutte le partizioni e i filesystem presenti
+nell'immagine.
+
+Il comando da eseguire è il seguente:
+
+```bash
+sudo dd if=output/images/sdcard.img of=/dev/mmcblk0 bs=4M status=progress
+conv=fsync
+```
+
+Dove:
+- `if` (input file) specifica il percorso dell'immagine sorgente
+- `of` (output file) indica il dispositivo di destinazione (la scheda SD)
+- `bs=4M` imposta la dimensione del blocco a 4 megabyte per ottimizzare la
+  velocità di trasferimento
+- `status=progress` visualizza l'avanzamento dell'operazione
+- `conv=fsync` garantisce la sincronizzazione dei dati sul dispositivo prima
+  della conclusione del comando
+
+*Nota:* è necessario adattare i percorsi (`if`) e il nome del dispositivo
+(`of`) in base alla configurazione specifica della macchina utilizzata. Per
+identificare correttamente il dispositivo della scheda SD, si consiglia di
+utilizzare il comando `lsblk` prima e dopo l'inserimento della scheda.
+
+== Configurazione del dispositivo embedded
+
+Una volta preparata la scheda di memoria, è possibile procedere con la
+configurazione del dispositivo target.
+
+=== Avvio del sistema
+
+La procedura di avvio si articola nei seguenti passaggi:
+
+1. *Inserimento della scheda:* estrarre con cautela la scheda SD dal computer
+   e inserirla nello slot apposito presente sulla board Ganador.
+
+2. *Alimentazione della board:* collegare l'alimentazione alla board per
+   avviare il processo di boot.
+
+3. *Attesa dell'avvio:* il sistema impiega circa un minuto per completare
+   l'avvio. Durante questa fase vengono eseguite le seguenti operazioni:
+   - Inizializzazione del kernel Linux
+   - Montaggio dei filesystem
+   - Generazione delle chiavi SSH (operazione che richiede circa 30 secondi)
+
+Al termine di questo processo, il sistema è pronto per essere configurato
+e utilizzato.
+
+=== Modalità di connessione al dispositivo
+
+Sono disponibili due modalità alternative per accedere al sistema embedded:
+
+==== Connessione tramite porta seriale
+
+La connessione seriale rappresenta il metodo più affidabile per l'accesso
+iniziale al sistema, poiché non richiede la configurazione di rete.
+
+*Requisiti hardware:*
+- Adattatore USB-seriale compatibile con livelli logici RS-232
+- Cavi di collegamento per i pin UART della board
+
+*Configurazione software:*
+Per la comunicazione seriale è necessario utilizzare un emulatore di
+terminale.
+Il software consigliato è `minicom`, disponibile sulla maggior parte delle
+distribuzioni Linux.
+
+*Procedura di connessione:*
+
+1. Collegare l'adattatore USB-seriale al computer host
+2. Connettere i pin dell'adattatore alla board Ganador secondo lo schema
+   riportato nella @serial-port-pins
+3. Identificare il nome del device seriale (tipicamente `/dev/ttyUSB0` su
+   sistemi Linux) mediante il comando `dmesg | grep tty`
+4. Avviare minicom specificando il device: `minicom -D /dev/ttyUSB0`
 
 #figure(
   image("/images/serial-pinout.jpg"),
-  caption: [Immagine che mostra la connessione dei pin],
+  caption: [Schema di collegamento dei pin per la comunicazione seriale],
 ) <serial-port-pins>
 
+==== Connessione tramite SSH
 
-=== `ssh`
-Per connetterci tramite ssh usiamo semplicemente il comando `ssh
-root@10.42.0.2`.
-La password per `root` e `root`. Per cambiare password e configurazione di
-rete dobbiamo modificare `buildroot`.
+La connessione SSH offre un accesso remoto più flessibile, particolarmente
+utile quando il dispositivo è già configurato e integrato nell'ambiente
+operativo.
+
+Per stabilire la connessione, utilizzare il comando:
+
+```bash
+ssh root@10.42.0.2
+```
+
+Le credenziali di accesso predefinite sono:
+- *Username:* `root`
+- *Password:* `root`
+
+*Personalizzazione delle credenziali e della rete:*
+
+Qualora fosse necessario modificare la password di root o la configurazione
+di rete prima della compilazione, è possibile intervenire direttamente sulla
+configurazione di Buildroot.
+
+La @buildroot-password mostra la modifica della password di root nel file
+di configurazione `vulcanoa5_defconfig`, mentre la @buildroot-network
+illustra la configurazione dell'interfaccia di rete.
 
 #figure(
-  caption: `git show fc474df54681e9057202aac05b035762825c07f4`,
+  caption: [Modifica della password di root in Buildroot],
   sourcecode[```diff
 commit fc474df54681e9057202aac05b035762825c07f4
 Author: Mattia Papaccioli <mattiapapaccioli@gmail.com>
@@ -85,15 +202,11 @@ index 7f9b3db1c1..2b66c41777 100644
  BR2_PACKAGE_XORG7=y
  BR2_PACKAGE_XSERVER_XORG_SERVER=y
  BR2_PACKAGE_XAPP_XINIT=y
-
-
   ```]
-
-
-)
+) <buildroot-password>
 
 #figure(
-  caption: `git show 7f0ab83b26eca8b584839a693734d12126465cdc`,
+  caption: [Configurazione dell'interfaccia di rete in Buildroot],
   sourcecode[```diff
 commit 7f0ab83b26eca8b584839a693734d12126465cdc
 Author: Mattia Papaccioli <92176188+sbOogway@users.noreply.github.com>
@@ -109,14 +222,14 @@ index 7d23a89120..642c5013ac 100644
 +++ b/package/ifupdown-scripts/S40network
 @@ -26,8 +26,5 @@ case "$1" in
 	exit 1
- esac
+  esac
 
 -ip a a 192.168.8.11/24 dev eth0
 -ip link set eth0 up
 -
- exit $?
+  exit $?
 
-diff --git a/package/ifupdown-scripts/ifupdown-scripts.mk
+ diff --git a/package/ifupdown-scripts/ifupdown-scripts.mk
 b/package/ifupdown-scripts/ifupdown-scripts.mk
 index 5ef032142c..7397e2d034 100644
 --- a/package/ifupdown-scripts/ifupdown-scripts.mk
@@ -134,31 +247,102 @@ index 5ef032142c..7397e2d034 100644
 +		echo "	  post-up echo \"nameserver 8.8.8.8\" >
 /etc/resolv.conf"; \
 	) >> $(TARGET_DIR)/etc/network/interfaces
- endef
-
+  endef
 
 
   ```]
-)
+) <buildroot-network>
 
-== Inizializzazione ed avviamento
-Una volte effettuato l accesso al dispositivo, dobbiamo spostarci nella
-cartella `/opt/amel/`. Da qui, possiamo impostare il file `config.env`,
-dove sono presenti le variabili di ambiente per impostare il sistema.
-Per calibrare lo schermo in con `lvgl` e necessario impostare le variabili
-`LV_MIN_X`, `LV_MIN_Y`, `LV_MAX_X`, `LV_MAX_Y` con i valori corretti ottenuti
-calibrando lo schermo e premendo il touch screen agli angoli con
-`evtest /dev/input/event0`.
+== Inizializzazione e avvio del sistema
 
-Una volta impostate, e possibile effettuare l'inizializzazione avviando
-lo script `init.sh`. Esso si occupa di creare i file e le cartelle necessari.
+Dopo aver stabilito la connessione con il dispositivo, è necessario procedere
+con la configurazione del software applicativo e l'avvio dei servizi.
 
-Per avviare il sistema, basta eseguire lo script `run.sh`, che si occupa di
-avviare i processi necessari per il funzionamento.
+=== Configurazione dell'ambiente
 
-Per fermare il sistema, basta eseguire lo script `kill.sh`, che si occupa
-di fermare i processi avviati da `run.sh`.
+La directory di lavoro principale del sistema è `/opt/amel/`. È necessario
+posizionarsi in tale directory per accedere agli script e ai file di
+configurazione:
 
-I log del sistema sono disponibili nella cartella `/opt/amel/logs/`, dove
-sono presenti i log dei processi avviati da `run.sh`.
+```bash
+cd /opt/amel/
+```
 
+All'interno di questa directory è presente il file `config.env`, che contiene
+le variabili d'ambiente necessarie per la personalizzazione del comportamento
+del sistema. Tale file deve essere modificato in base alle esigenze
+specifiche dell'installazione.
+
+=== Calibrazione del touchscreen
+
+Il sistema utilizza la libreria grafica LVGL per l'interfaccia utente. Per
+garantire il corretto funzionamento del touchscreen è necessario effettuare
+una procedura di calibrazione.
+
+La calibrazione richiede la determinazione dei seguenti parametri, da
+inserire nel file `config.env`:
+
+- `LV_MIN_X`: valore minimo sull'asse X
+- `LV_MIN_Y`: valore minimo sull'asse Y
+- `LV_MAX_X`: valore massimo sull'asse X
+- `LV_MAX_Y`: valore massimo sull'asse Y
+
+*Procedura di calibrazione:*
+
+1. Eseguire il comando `evtest /dev/input/event0` per monitorare gli eventi
+   di input del touchscreen
+2. Toccare successivamente i quattro angoli dello schermo
+3. Annotare i valori minimi e massimi rilevati per ciascun asse
+4. Inserire tali valori nel file `config.env`
+
+=== Script di gestione del sistema
+
+Il sistema fornisce tre script principali per la gestione dei servizi:
+
+*1. Script di inizializzazione (`init.sh`)*
+
+Questo script deve essere eseguito una sola volta, tipicamente dopo la prima
+installazione o dopo una reimpostazione del sistema. Il suo compito è
+creare la struttura di directory e i file necessari al funzionamento
+dell'applicazione.
+
+```bash
+./init.sh
+```
+
+*2. Script di avvio (`run.sh`)*
+
+Per avviare il sistema di controllo temperatura è sufficiente eseguire lo
+script `run.sh`. Tale script si occupa di avviare in sequenza tutti i
+processi necessari, inclusi il servizio di acquisizione dati, il controllore
+PID e l'interfaccia grafica.
+
+```bash
+./run.sh
+```
+
+*3. Script di arresto (`kill.sh`)*
+
+Per terminare correttamente l'esecuzione del sistema è necessario utilizzare
+lo script `kill.sh`. Questo script provvede a interrompere in modo ordinato
+tutti i processi avviati dallo script `run.sh`, garantendo la chiusura
+corretta delle risorse e il salvataggio dei dati.
+
+```bash
+./kill.sh
+```
+
+=== Monitoraggio e logging
+
+Il sistema mantiene una traccia dettagliata delle operazioni mediante file
+di log, archiviati nella directory `/opt/amel/logs/`.
+
+Tali log contengono:
+- Messaggi di avvio e arresto dei processi
+- Eventuali errori e warning
+- Informazioni di debug relative al funzionamento del sistema
+
+La consultazione dei log è fondamentale per il monitoraggio del sistema e
+per l'individuazione di eventuali malfunzionamenti. È possibile visualizzare
+i log in tempo reale mediante il comando `tail -f` oppure analizzarli
+a posteriori con strumenti come `less` o `grep`.
