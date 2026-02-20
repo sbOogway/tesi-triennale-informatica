@@ -31,8 +31,7 @@ oltre alle pratiche di unit testing tradizionali.
 
 Il presente progetto di tesi ha costituito un'occasione significativa
 di crescita professionale e personale, permettendo l'acquisizione di
-competenze trasversali di rilevante interesse per il percorso di formazione
-ingegneristica.
+competenze trasversali di rilevante interesse per il percorso di formazione.
 
 === Strumenti di sviluppo collaborativo
 
@@ -89,7 +88,7 @@ dalla progettazione alla messa in opera. Estendo i miei ringraziamenti a
 tutti i colleghi dell'azienda per l'accoglienza ricevuta e per l'ambiente
 di lavoro favorevole allo scambio di conoscenze.
 
-Vorrei inoltre ringraziare i docenti del Corso di Laurea in Ingegneria
+Vorrei inoltre ringraziare i docenti del Corso di Laurea in
 Informatica, in particolare il Professor Carlo Dossi per la supervisione
 accademica e la disponibilità dimostrata durante il percorso di tesi. Un
 sentito grazie anche ai compagni di corso, con cui le discussioni e il
