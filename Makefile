@@ -10,8 +10,7 @@ format:
 
 build:
 	typst c main.typ
-	gs -dPDFA -dBATCH -dNOPAUSE -sProcessColorModel=DeviceRGB -sDEVICE=pdfwrite -sPDFACompatibi
-lityPolicy=1 -sOutputFile=main_pdfa.pdf main.pdf
+	gs -dPDFA -dBATCH -dNOPAUSE -sProcessColorModel=DeviceRGB -sDEVICE=pdfwrite -sPDFACompatibilityPolicy=1 -sOutputFile=main_pdfa.pdf main.pdf
 
 
 presentation:
